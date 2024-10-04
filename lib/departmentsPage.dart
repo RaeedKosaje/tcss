@@ -8,7 +8,6 @@ import 'package:http/http.dart' as http;
 import 'package:untitled1/editdepartment.dart';
 import 'package:untitled1/models/show_departments_model.dart';
 import 'createDepartment.dart';
-import 'deletedepartment.dart';
 import 'main.dart';
 
 class DepartmentsPage extends StatefulWidget {
@@ -46,6 +45,70 @@ class _ShowDepartmentsState extends State<DepartmentsPage> {
           .toList();
     } else {
       throw Exception('Failed to load departments');
+    }
+  }
+
+  // دالة لعرض حوار تأكيد الحذف
+  void showDeleteDialog(BuildContext context, int departmentId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Department'),
+          content: const Text(
+            'Are you sure you want to delete this department?',
+            style: TextStyle(fontSize: 18),
+            textAlign: TextAlign.center,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                bool success = await deleteDepartment(departmentId, context);
+                if (success) {
+                  setState(() {
+                    futureDepartments = fetchDepartments(); // تحديث قائمة الأقسام بعد الحذف
+                  });
+                  Navigator.of(context).pop(); // إغلاق الحوار بعد الحذف
+                }
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // دالة لحذف القسم من خلال API
+  Future<bool> deleteDepartment(int departmentId, BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token') ?? '';
+
+    final Uri url = Uri.parse('$urlbase/deleteDepartment/$departmentId');
+
+    final response = await http.delete(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Department deleted successfully')),
+      );
+      return true;
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to delete department')),
+      );
+      return false;
     }
   }
 
@@ -131,25 +194,12 @@ class _ShowDepartmentsState extends State<DepartmentsPage> {
                                       }
                                     });
                                   },
-                                  child: const Text('edit'),
+                                  child: const Text('Edit'),
                                 ),
                                 ElevatedButton(
                                   onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => Deletedepartment(
-                                          departmentid: departments[index].id!,
-                                        ),
-                                      ),
-                                    ).then((value) {
-                                      if (value == true) {
-                                        setState(() {
-                                          futureDepartments =
-                                              fetchDepartments();
-                                        });
-                                      }
-                                    });
+                                    showDeleteDialog(
+                                        context, departments[index].id!);
                                   },
                                   child: const Text('Delete'),
                                 ),

@@ -4,10 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled1/drawer.dart';
 import 'package:http/http.dart' as http;
 import 'package:untitled1/models/show_floors_model.dart';
-
 import 'departmentsPage.dart';
 import 'main.dart';
-
 class FloorsPage extends StatefulWidget {
   const FloorsPage({super.key});
 
@@ -66,7 +64,6 @@ class _FloorsPageState extends State<FloorsPage> {
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
-                    // تمرير ID الطابق المختار إلى صفحة الأقسام
                     Navigator.push(
                       context,
                       MaterialPageRoute(

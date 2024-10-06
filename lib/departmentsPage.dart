@@ -61,7 +61,7 @@ class _ShowDepartmentsState extends State<DepartmentsPage> {
             textAlign: TextAlign.center,
           ),
           actions: [
-            TextButton(
+            ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },

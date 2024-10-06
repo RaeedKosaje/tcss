@@ -14,6 +14,7 @@ import 'package:untitled1/models/show-properties-model.dart';
 import 'package:untitled1/models/show_devices_model.dart';
 import 'createHardwarekey.dart';
 
+import 'edithardwarekey.dart';
 import 'main.dart';
 import 'models/create_hardware_key_model.dart';
 import 'models/show_peripherals_model.dart';
@@ -130,7 +131,7 @@ class _ShowDevicesState extends State<DevicesPage> {
             textAlign: TextAlign.center,
           ),
           actions: [
-            TextButton(
+            ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -303,25 +304,25 @@ class _ShowDevicesState extends State<DevicesPage> {
 
               const SizedBox(height: 10), // مسافة بين المواصفات والأزرار
 
-              // ElevatedButton(
-              //   onPressed: () {
-              //     Navigator.push(
-              //       context,
-              //       MaterialPageRoute(
-              //         builder: (context) =>
-              //             EditPeripherals(
-              //                 Deviceid: hardwarekey!.id!),
-              //       ),
-              //     ).then((value) {
-              //       if (value == true) {
-              //         setState(() {
-              //           fetchDevices();
-              //         });
-              //       }
-              //     });
-              //   },
-              //   child: const Text('تعديل دارة الحماية'),
-              // ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          Edithardwarekey(
+                              deviceid: hardwarekey!.id!),
+                    ),
+                  ).then((value) {
+                    if (value == true) {
+                      setState(() {
+                        fetchDevices();
+                      });
+                    }
+                  });
+                },
+                child: const Text('تعديل دارة الحماية'),
+              ),
             ],
           ),
           actions: [
@@ -411,8 +412,21 @@ class _ShowDevicesState extends State<DevicesPage> {
                                   onPressed: () {
                                     print("صيانة");
                                   },
-                                  child: const Text('خدمة صيانة'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue, // لون الخلفية
+                                    foregroundColor: Colors.white, // لون النص
+                                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12), // حشوة الزر
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12), // الزوايا المستديرة
+                                    ),
+                                    elevation: 5, // ارتفاع الظل
+                                  ),
+                                  child: const Text(
+                                    'خدمة صيانة',
+                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold), // تخصيص النص
+                                  ),
                                 ),
+
                                 ElevatedButton(
                                   onPressed: () {
                                     print("خدمة تركيب");

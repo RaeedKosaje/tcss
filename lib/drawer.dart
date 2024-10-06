@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled1/main.dart';
 import 'package:untitled1/showUsers.dart';
+import 'package:untitled1/showmaterial.dart';
 
 class NavDrawer extends StatefulWidget {
   @override
@@ -11,7 +12,6 @@ class NavDrawer extends StatefulWidget {
 class _NavDrawerState extends State<NavDrawer> {
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -41,18 +41,18 @@ class _NavDrawerState extends State<NavDrawer> {
         ),
         ListTile(
           leading: Icon(
-            Icons.key,
+            Icons.shopping_bag,
             size: 35.0,
           ),
           title: Text(
-            'Hardware key',
+            'Show material',
             style: TextStyle(fontSize: 15.0),
           ),
-          onTap: () {print("object");
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(builder: (context) => Showusers()),
-            // );
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ShowMaterials()),
+            );
           },
         ),Container(
           child: const Divider(

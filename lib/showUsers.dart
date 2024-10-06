@@ -30,7 +30,7 @@ class _ShowUserState extends State<Showusers> {
     String token = prefs.getString('token') ?? '';
 
     final response = await http.get(
-      Uri.parse('$urlbase/showUsers?'),
+      Uri.parse('$urlbase/showUsers'),
       headers: {
         'Authorization': 'Bearer $token',
       },
@@ -57,7 +57,7 @@ class _ShowUserState extends State<Showusers> {
             textAlign: TextAlign.center,
           ),
           actions: <Widget>[
-            TextButton(
+            ElevatedButton(
               child: Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop(); // إغلاق الحوار

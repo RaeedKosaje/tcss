@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled1/drawer.dart';
 import 'package:http/http.dart' as http;
 import 'main.dart';
+import 'package:intl/intl.dart'; // لتنسيق التاريخ
 
 class Creathardwarekey extends StatelessWidget {
   final int deviceid;
@@ -33,9 +34,25 @@ class Creathardwarekey extends StatelessWidget {
               controller: serealController,
               decoration: const InputDecoration(labelText: 'serealController'),
             ),
+            // حقل لاختيار التاريخ
             TextField(
               controller: exDateController,
-              decoration: const InputDecoration(labelText: 'exDateController'),
+              readOnly: true, // اجعل الحقل غير قابل للتحرير اليدوي
+              decoration: const InputDecoration(labelText: 'Expiration Date'),
+              onTap: () async {
+                // عند الضغط على الحقل، افتح منتقي التاريخ
+                DateTime? pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(), // التاريخ الافتراضي الحالي
+                  firstDate: DateTime(2000), // أقل تاريخ مسموح
+                  lastDate: DateTime(2100), // أعلى تاريخ مسموح
+                );
+
+                if (pickedDate != null) {
+                  String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+                  exDateController.text = formattedDate; // املأ الحقل بالتاريخ المختار
+                }
+              },
             ),
             TextField(
               controller: descriptionController,
@@ -55,7 +72,7 @@ class Creathardwarekey extends StatelessWidget {
                   Navigator.pop(context, true);
                 }
               },
-              child: const Text('create Hardware key'),
+              child: const Text('Create Hardware Key'),
             ),
           ],
         ),
@@ -77,7 +94,6 @@ class Creathardwarekey extends StatelessWidget {
     final response = await http.post(
       url,
       body: {
-
         "type": type,
         "sereal": sereal,
         "exDate": exDate,
@@ -90,11 +106,10 @@ class Creathardwarekey extends StatelessWidget {
 
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('create Hardware key successfully')),
+        const SnackBar(content: Text('Hardware key created successfully')),
       );
       return true;
     } else {
-      // فشل العملية
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(response.body)),
       );

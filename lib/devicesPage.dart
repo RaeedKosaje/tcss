@@ -13,7 +13,8 @@ import 'package:untitled1/editperipherals.dart';
 import 'package:untitled1/models/show-properties-model.dart';
 import 'package:untitled1/models/show_devices_model.dart';
 import 'createHardwarekey.dart';
-
+import 'createinstallationservice.dart';
+import 'createmaintenanceservice.dart';
 import 'edithardwarekey.dart';
 import 'main.dart';
 import 'models/create_hardware_key_model.dart';
@@ -410,7 +411,20 @@ class _ShowDevicesState extends State<DevicesPage> {
                                 ),
                                 ElevatedButton(
                                   onPressed: () {
-                                    print("صيانة");
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => CreateMaintenanceService(
+
+                                            deviceId: futureDevices[index].id!),
+                                      ),
+                                    ).then((value) {
+                                      if (value == true) {
+                                        setState(() {
+                                          fetchDevices();
+                                        });
+                                      }
+                                    });
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.blue, // لون الخلفية
@@ -429,10 +443,36 @@ class _ShowDevicesState extends State<DevicesPage> {
 
                                 ElevatedButton(
                                   onPressed: () {
-                                    print("خدمة تركيب");
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => CreateInstallationService(
+
+                                            deviceId: futureDevices[index].id!),
+                                      ),
+                                    ).then((value) {
+                                      if (value == true) {
+                                        setState(() {
+                                          fetchDevices();
+                                        });
+                                      }
+                                    });
                                   },
-                                  child: const Text('خدمة تركيب'),
-                                ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue, // لون الخلفية
+                                    foregroundColor: Colors.white, // لون النص
+                                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12), // حشوة الزر
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12), // الزوايا المستديرة
+                                    ),
+                                    elevation: 5, // ارتفاع الظل
+                                  ),
+                                  child: const  Text(
+                                    'خدمة تركيب',
+                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold), // تخصيص النص
+                                  ),
+                                  ),
+
                                 // زر مواصفات الجهاز
                                 ElevatedButton(
                                   onPressed: () {

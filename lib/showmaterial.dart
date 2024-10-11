@@ -52,7 +52,7 @@ class _ShowMaterialState extends State<ShowMaterials> {
         return AlertDialog(
           title: Text('Delete User'),
           content: Text(
-            'Are you sure you want to delete  "${material.name}"?',
+            'Are you sure you want to delete "${material.name}"?',
             style: TextStyle(fontSize: 18),
             textAlign: TextAlign.center,
           ),
@@ -69,7 +69,8 @@ class _ShowMaterialState extends State<ShowMaterials> {
                 bool success = await _deletematerial(material.id!, context);
                 if (success) {
                   setState(() {
-                    futureMaterial = fetchMaterial(); // تحديث المستخدمين بعد الحذف
+                    futureMaterial =
+                        fetchMaterial(); // تحديث المستخدمين بعد الحذف
                   });
                   Navigator.of(context).pop(); // إغلاق الحوار
                 }
@@ -82,7 +83,7 @@ class _ShowMaterialState extends State<ShowMaterials> {
   }
 
   // دالة لحذف المستخدم من خلال API
-  Future<bool> _deletematerial(int materialId , BuildContext context) async {
+  Future<bool> _deletematerial(int materialId, BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token') ?? '';
 
@@ -97,7 +98,7 @@ class _ShowMaterialState extends State<ShowMaterials> {
 
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('material deleted successfully')),
+        const SnackBar(content: Text('Material deleted successfully')),
       );
       return true;
     } else {
@@ -109,7 +110,8 @@ class _ShowMaterialState extends State<ShowMaterials> {
   }
 
   // دالة لعرض قائمة الخيارات (تعديل / حذف)
-  void _showPopupMenu(BuildContext context, Showmaterial material, Offset offset) {
+  void _showPopupMenu(
+      BuildContext context, Showmaterial material, Offset offset) {
     showMenu(
       context: context,
       position: RelativeRect.fromLTRB(
@@ -157,7 +159,8 @@ class _ShowMaterialState extends State<ShowMaterials> {
             }
           });
         } else if (value == 1) {
-          _showDeleteDialog(context, material); // عرض حوار الحذف بدلاً من صفحة الحذف
+          _showDeleteDialog(
+              context, material); // عرض حوار الحذف بدلاً من صفحة الحذف
         }
       }
     });
@@ -167,12 +170,12 @@ class _ShowMaterialState extends State<ShowMaterials> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Show material '),
+        title: Text('Show Material'),
         backgroundColor: Colors.teal,
       ),
       drawer: NavDrawer(),
       body: FutureBuilder<List<Showmaterial>>(
-        future: fetchMaterial(),
+        future: futureMaterial,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List<Showmaterial>? material = snapshot.data;
@@ -183,35 +186,89 @@ class _ShowMaterialState extends State<ShowMaterials> {
                 final GlobalKey buttonKey = GlobalKey();
 
                 return Card(
-                  elevation: 8,
+                  elevation: 12,
                   margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
+                    child: ExpansionTile(
+                      title: Row(
+                        children: [
+                          Icon(Icons.notes, color: Colors.teal),
+                          SizedBox(width: 8),
+                          Text(
                             material![index].name ?? 'No Name',
                             style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.teal),
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.teal,
+                            ),
+                          ),
+                        ],
+                      ),
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Quantity: ${material![index].quantity?.toString() ?? 'No Quantity'}',
+                                  style: const TextStyle(fontSize: 18, color: Colors.brown),
+                                  overflow: TextOverflow.clip, // يقطع النص إذا كان طويلاً
+                                ),
+                              ),
+                              SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  'Price: ${material![index].price?.toString() ?? 'No Price'}',
+                                  style: TextStyle(fontSize: 18, color: Colors.blue),
+                                  overflow: TextOverflow.clip, // يقطع النص إذا كان طويلاً
+                                ),
+                              ),SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  'code: ${material![index].code?.toString() ?? 'No code'}',
+                                  style: TextStyle(fontSize: 18, color: Colors.green),
+                                  overflow: TextOverflow.clip, // يقطع النص إذا كان طويلاً
+                                ),
+                              ),
+                              SizedBox(width: 4),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.edit, color: Colors.teal),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => EditMaterial(materialId: material[index].id!),
+                                        ),
+                                      ).then((value) {
+                                        if (value == true) {
+                                          setState(() {
+                                            futureMaterial = fetchMaterial();
+                                          });
+                                        }
+                                      });
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.delete, color: Colors.red),
+                                    onPressed: () {
+                                      _showDeleteDialog(context, material[index]);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                        IconButton(
-                          key: buttonKey, // تعيين المفتاح إلى الزر
-                          icon: Icon(Icons.more_vert, color: Colors.teal),
-                          onPressed: () {
-                            // استخدام مفتاح الزر لتحديد موقعه
-                            RenderBox renderBox = buttonKey.currentContext!.findRenderObject() as RenderBox;
-                            Offset offset = renderBox.localToGlobal(Offset.zero);
-                            _showPopupMenu(context, material[index], Offset(offset.dx, offset.dy + 30)); // تعديل إزاحة Y
-                          },
-                        ),
+
                       ],
                     ),
                   ),

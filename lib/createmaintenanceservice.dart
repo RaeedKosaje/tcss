@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:untitled1/drawer.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'main.dart';
 
-class CreateUser extends StatelessWidget {
-  const CreateUser({super.key});
+class CreateMaintenanceService extends StatelessWidget {
+  final int deviceId;
+
+  const CreateMaintenanceService({super.key, required this.deviceId});
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController userNameController = TextEditingController();
-    final TextEditingController userPasswordController =TextEditingController();
-
+    final TextEditingController descriptionController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create User'),
+        title: const Text('Create Maintenance Service'),
       ),
       drawer: NavDrawer(),
       body: Padding(
@@ -22,27 +23,23 @@ class CreateUser extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            TextField(
-              controller: userNameController,
-              decoration: const InputDecoration(labelText: 'Username'),
-            ),
-            TextField(
-              controller: userPasswordController,
-              decoration: const InputDecoration(labelText: 'Password'),
+            TextFormField(
+              controller: descriptionController,
+              decoration: const InputDecoration(labelText: 'description'),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                bool success = await createUser(
+                bool success = await createMaintenanceService(
+                  description: descriptionController.text,
+                  deviceId: deviceId,
                   context: context,
-                  name: userNameController.text,
-                  password: userPasswordController.text,
                 );
                 if (success) {
                   Navigator.pop(context, true);
                 }
               },
-              child: const Text('Create User'),
+              child: const Text('Create Maintenance Service'),
             ),
           ],
         ),
@@ -50,21 +47,20 @@ class CreateUser extends StatelessWidget {
     );
   }
 
-  Future<bool> createUser({
+  Future<bool> createMaintenanceService({
+    required int deviceId,
     required BuildContext context,
-    required String name,
-    required String password,
+    required String description,
   }) async {
     final prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token') ?? '';
 
-    final Uri url = Uri.parse('$urlbase/createUser');
+    final Uri url = Uri.parse('$urlbase/createMaintenanceService/$deviceId');
 
     final response = await http.post(
       url,
       body: {
-        'name': name,
-        'password': password,
+        'description': description.toString(),
       },
       headers: {
         'Authorization': 'Bearer $token',
@@ -73,12 +69,14 @@ class CreateUser extends StatelessWidget {
 
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('User created successfully')),
+        const SnackBar(
+            content: Text('Create Maintenance Service successfully')),
       );
       return true;
     } else {
+      print(response.body);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to create user')),
+        const SnackBar(content: Text('Failed to Create Maintenance Service')),
       );
       return false;
     }

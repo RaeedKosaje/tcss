@@ -10,7 +10,7 @@ class EditMaterial extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final TextEditingController codeController = TextEditingController();
+    final TextEditingController codeController = TextEditingController();
     final TextEditingController nameController = TextEditingController();
     final TextEditingController quantityController = TextEditingController();
     final TextEditingController priceController = TextEditingController();
@@ -38,17 +38,17 @@ class EditMaterial extends StatelessWidget {
                   return null;
                 },
               ),
-              // TextFormField(
-              //   controller: codeController,
-              //   decoration: const InputDecoration(labelText: 'New material code'),
-              //   obscureText: true,
-              //   validator: (value){
-              //     if(value!.length<1){
-              //       return ' the code must be ';
-              //     }
-              //     return null;
-              //   },
-              // ),
+              TextFormField(
+                controller: codeController,
+                decoration: const InputDecoration(labelText: 'New material code'),
+                obscureText: true,
+                validator: (value){
+                  if(value!.length<1){
+                    return ' the code must be ';
+                  }
+                  return null;
+                },
+              ),
               TextFormField(
                 controller: quantityController,
                 decoration: const InputDecoration(labelText: 'New material quantity'),
@@ -75,16 +75,16 @@ class EditMaterial extends StatelessWidget {
                     await editmaterial(
                       materialId: materialId,
                       name: nameController.text,
-                      // code: codeController.text,
+                      code: codeController.text,
                       quantity:quantityController.text,
                       price:priceController.text,
                       context: context,
                     );
 
                     // إذا نجحت العملية، الرجوع إلى الصفحة السابقة
-                    if (success) {
-                      Navigator.pop(context, true); // الرجوع مع القيمة true
-                    }
+                    // if (success) {
+                    //    Navigator.pop(context, true); // الرجوع مع القيمة true
+                    //  }else{}
                   }
 
                 },
@@ -100,7 +100,7 @@ class EditMaterial extends StatelessWidget {
   Future<bool> editmaterial({
     required int materialId,
     required String name,
-    // required String code,
+    required String code,
     required String quantity,
     required String price,
     required BuildContext context,

@@ -12,6 +12,7 @@ class CreateMaterial extends StatelessWidget {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController quantityController = TextEditingController();
     final TextEditingController priceController = TextEditingController();
+    final TextEditingController codeController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
@@ -32,6 +33,10 @@ class CreateMaterial extends StatelessWidget {
               decoration: const InputDecoration(labelText: 'quantity'),
             ),
             TextField(
+              controller: codeController,
+              decoration: const InputDecoration(labelText: 'code'),
+            ),
+            TextField(
               controller: priceController,
               decoration: const InputDecoration(labelText: 'price'),
             ),
@@ -40,6 +45,7 @@ class CreateMaterial extends StatelessWidget {
               onPressed: () async {
                 bool success = await creatematerial(
                   context: context,
+                  code: codeController.text,
                   name: nameController.text,
                   quantity:quantityController.text,
                   price:priceController.text
@@ -60,7 +66,8 @@ class CreateMaterial extends StatelessWidget {
     required BuildContext context,
     required String name,
     required String quantity,
-    required String price
+    required String price,
+    required String code
   }) async {
     final prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token') ?? '';
@@ -73,6 +80,7 @@ class CreateMaterial extends StatelessWidget {
         'name': name,
         'quantity': quantity,
         'price': price,
+        'code':code
       },
       headers: {
         'Authorization': 'Bearer $token',

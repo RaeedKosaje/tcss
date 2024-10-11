@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled1/main.dart';
+import 'package:untitled1/report.dart';
+import 'package:untitled1/showInstallationservice.dart';
 import 'package:untitled1/showUsers.dart';
+import 'package:untitled1/showmaintenanceService.dart';
 import 'package:untitled1/showmaterial.dart';
 
 class NavDrawer extends StatefulWidget {
@@ -18,87 +21,112 @@ class _NavDrawerState extends State<NavDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-        child: ListView(
-      children: [
-        Container(
-          padding: EdgeInsets.zero,
-          decoration: const BoxDecoration(
-            color: Colors.blueAccent,
-          ),
-          child: const UserAccountsDrawerHeader(
-            accountName: Text('suport it'),
-            accountEmail: Text('220'),
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          // Drawer Header
+          UserAccountsDrawerHeader(
+            accountName: Text(
+              'Support IT',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+            ),
+            accountEmail: Text('town center'),
             currentAccountPicture: CircleAvatar(
-                // backgroundImage: AssetImage('assets/drawerA.png'),
-                ),
+              // backgroundImage: AssetImage('assets/drawerA.png'),
+            ),
+            decoration: BoxDecoration(
+              color: Colors.teal, // Change to your app's primary color
+            ),
           ),
-        ),
 
-        Container(
-          child: const Divider(
-            thickness: 4,
+          // Drawer Items
+          _buildDrawerItem(
+            icon: Icons.shopping_bag,
+            text: 'Show Material',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ShowMaterials()),
+              );
+            },
+          ),_buildDrawerItem(
+            icon: Icons.electrical_services_sharp,
+            text: 'show Installation Service',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ShowInstallationService()),
+              );
+            },
           ),
-        ),
-        ListTile(
-          leading: Icon(
-            Icons.shopping_bag,
-            size: 35.0,
+          _buildDivider(),
+          _buildDrawerItem(
+            icon: Icons.domain_verification,
+            text: 'Show Maintenance Service',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ShowMaintenanceService()),
+              );
+            },
           ),
-          title: Text(
-            'Show material',
-            style: TextStyle(fontSize: 15.0),
+          _buildDivider(),
+          _buildDrawerItem(
+            icon: Icons.report,
+            text: 'Report',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Report()),
+              );
+            },
           ),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ShowMaterials()),
-            );
-          },
-        ),Container(
-          child: const Divider(
-            thickness: 4,
+          _buildDivider(),
+          _buildDrawerItem(
+            icon: Icons.admin_panel_settings,
+            text: 'User',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Showusers()),
+              );
+            },
           ),
-        ),
-        ListTile(
-          leading: Icon(
-            Icons.admin_panel_settings,
-            size: 35.0,
+          _buildDivider(),
+          _buildDrawerItem(
+            icon: Icons.logout,
+            text: 'Logout',
+            onTap: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.remove('token');
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => LoginPage()),
+              );
+            },
           ),
-          title: Text(
-            'user',
-            style: TextStyle(fontSize: 15.0),
-          ),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Showusers()),
-            );
-          },
-        ),
-        Container(
-          child: const Divider(
-            thickness: 4,
-          ),
-        ),
-        ListTile(
-          leading: Icon(
-            Icons.logout,
-            size: 35.0,
-          ),
-          title: Text(
-            'logout',
-            style: TextStyle(fontSize: 15.0),
-          ),
-          onTap: () async {
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            prefs.remove('token');
+        ],
+      ),
+    );
+  }
 
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => LoginPage()),
-            );
-          },
-        )
-      ],
-    ));
+  Widget _buildDrawerItem(
+      {required IconData icon, required String text, required GestureTapCallback onTap}) {
+    return ListTile(
+      title: Text(
+        text,
+        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+      ),
+      leading: Icon(icon, size: 28.0, color: Colors.teal),
+      onTap: onTap,
+    );
+  }
+
+  Widget _buildDivider() {
+    return Divider(
+      thickness: 1,
+      color: Colors.grey[300],
+      indent: 16,
+      endIndent: 16,
+    );
   }
 }

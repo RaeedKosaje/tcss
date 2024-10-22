@@ -18,63 +18,100 @@ class Creathardwarekey extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create hardware key'),
+        title: const Text('Create Hardware Key'),
+        backgroundColor: Colors.blueAccent, // نفس اللون المستخدم في شريط العنوان
       ),
       drawer: NavDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextField(
-              controller: typeController,
-              decoration: const InputDecoration(labelText: 'type'),
+        child: Center(
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
             ),
-            TextField(
-              controller: serealController,
-              decoration: const InputDecoration(labelText: 'serealController'),
-            ),
-            // حقل لاختيار التاريخ
-            TextField(
-              controller: exDateController,
-              readOnly: true, // اجعل الحقل غير قابل للتحرير اليدوي
-              decoration: const InputDecoration(labelText: 'Expiration Date'),
-              onTap: () async {
-                // عند الضغط على الحقل، افتح منتقي التاريخ
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(), // التاريخ الافتراضي الحالي
-                  firstDate: DateTime(2000), // أقل تاريخ مسموح
-                  lastDate: DateTime(2100), // أعلى تاريخ مسموح
-                );
+            elevation: 10,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  TextField(
+                    controller: typeController,
+                    decoration: const InputDecoration(
+                      labelText: 'Type',
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.white70, // لون الخلفية
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: serealController,
+                    decoration: const InputDecoration(
+                      labelText: 'Sereal Number',
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.white70, // لون الخلفية
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: exDateController,
+                    readOnly: true, // اجعل الحقل غير قابل للتحرير اليدوي
+                    decoration: const InputDecoration(labelText: 'Expiration Date'),
+                    onTap: () async {
+                      // عند الضغط على الحقل، افتح منتقي التاريخ
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(), // التاريخ الافتراضي الحالي
+                        firstDate: DateTime(2000), // أقل تاريخ مسموح
+                        lastDate: DateTime(2100), // أعلى تاريخ مسموح
+                      );
 
-                if (pickedDate != null) {
-                  String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
-                  exDateController.text = formattedDate; // املأ الحقل بالتاريخ المختار
-                }
-              },
+                      if (pickedDate != null) {
+                        String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+                        exDateController.text = formattedDate; // املأ الحقل بالتاريخ المختار
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: descriptionController,
+                    decoration: const InputDecoration(
+                      labelText: 'Description',
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.white70, // لون الخلفية
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.add),
+                    label: const Text('Create Hardware Key'),
+                    onPressed: () async {
+                      bool success = await createDevice(
+                        context: context,
+                        type: typeController.text,
+                        sereal: serealController.text,
+                        exDate: exDateController.text,
+                        description: descriptionController.text,
+                      );
+                      if (success) {
+                        Navigator.pop(context, true);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent, // لون الزر
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            TextField(
-              controller: descriptionController,
-              decoration: const InputDecoration(labelText: 'descriptionController'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                bool success = await createDevice(
-                  context: context,
-                  type: typeController.text,
-                  sereal: serealController.text,
-                  exDate: exDateController.text,
-                  description: descriptionController.text,
-                );
-                if (success) {
-                  Navigator.pop(context, true);
-                }
-              },
-              child: const Text('Create Hardware Key'),
-            ),
-          ],
+          ),
         ),
       ),
     );

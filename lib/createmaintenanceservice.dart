@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:untitled1/drawer.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'main.dart';
 
 class CreateMaintenanceService extends StatelessWidget {
@@ -13,36 +12,91 @@ class CreateMaintenanceService extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextEditingController descriptionController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Maintenance Service'),
+        backgroundColor: Colors.blueAccent, // تخصيص لون شريط العنوان
       ),
       drawer: NavDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextFormField(
-              controller: descriptionController,
-              decoration: const InputDecoration(labelText: 'description'),
+      body: Stack(
+        children: [
+          // إضافة خلفية
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('lib/images/createMaintenanceService.png'), // مسار صورة الخلفية
+                fit: BoxFit.cover,
+              ),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                bool success = await createMaintenanceService(
-                  description: descriptionController.text,
-                  deviceId: deviceId,
-                  context: context,
-                );
-                if (success) {
-                  Navigator.pop(context, true);
-                }
-              },
-              child: const Text('Create Maintenance Service'),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20), // زوايا مستديرة
+                ),
+                elevation: 10, // ظل الكارد
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        'Create Maintenance Service',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blueAccent,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      _buildTextField(descriptionController, 'Description'),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () async {
+                          bool success = await createMaintenanceService(
+                            description: descriptionController.text,
+                            deviceId: deviceId,
+                            context: context,
+                          );
+                          if (success) {
+                            Navigator.pop(context, true);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blueAccent,
+                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          elevation: 5,
+                        ),
+                        child: const Text(
+                          'Create Service',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(),
+        filled: true,
+        fillColor: Colors.white70, // لون خلفية الحقل
       ),
     );
   }
@@ -60,7 +114,7 @@ class CreateMaintenanceService extends StatelessWidget {
     final response = await http.post(
       url,
       body: {
-        'description': description.toString(),
+        'description': description,
       },
       headers: {
         'Authorization': 'Bearer $token',
@@ -69,14 +123,12 @@ class CreateMaintenanceService extends StatelessWidget {
 
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Create Maintenance Service successfully')),
+        const SnackBar(content: Text('Maintenance Service created successfully')),
       );
       return true;
     } else {
-      print(response.body);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to Create Maintenance Service')),
+        const SnackBar(content: Text('Failed to create Maintenance Service')),
       );
       return false;
     }

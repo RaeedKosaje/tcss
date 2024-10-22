@@ -10,7 +10,7 @@ class EditPeripherals extends StatelessWidget {
 
   const EditPeripherals({
     super.key,
-    required this.Deviceid
+    required this.Deviceid,
   });
 
   @override
@@ -25,72 +25,110 @@ class EditPeripherals extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Properties'),
+        title: const Text('Edit Peripherals'),
+        backgroundColor: Colors.teal, // تخصيص لون شريط العنوان
       ),
       drawer: NavDrawer(),
-      body: SingleChildScrollView( // إضافة SingleChildScrollView هنا
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start, // تغيير المركز إلى البداية
-          children: <Widget>[
-            TextField(
-              controller: MonitorController,
-              decoration: const InputDecoration(labelText: 'New CPU'),
+      body: Stack(
+        children: [
+          // الخلفية
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('lib/images/editperipherals.png'), // مسار صورة الخلفية
+                fit: BoxFit.cover, // جعل الصورة تغطي كامل الخلفية
+              ),
             ),
-            TextField(
-              controller: KeyboardController,
-              decoration: const InputDecoration(labelText: 'New Motherboard'),
+          ),
+          // محتوى الصفحة
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20), // زوايا مستديرة
+                ),
+                elevation: 10, // ظل الكارد
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min, // تعديل حجم العمود
+                    children: <Widget>[
+                      Text(
+                        'Edit Peripheral Devices',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.teal,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      // حقول الإدخال
+                      _buildTextField(MonitorController, 'Monitor'),
+                      const SizedBox(height: 20),
+                      _buildTextField(KeyboardController, 'Keyboard'),
+                      const SizedBox(height: 20),
+                      _buildTextField(MouseController, 'Mouse'),
+                      const SizedBox(height: 20),
+                      _buildTextField(PrinterController, 'Printer'),
+                      const SizedBox(height: 20),
+                      _buildTextField(UPSController, 'UPS'),
+                      const SizedBox(height: 20),
+                      _buildTextField(cashBoxController, 'Cash Box'),
+                      const SizedBox(height: 20),
+                      _buildTextField(BarcodeController, 'Barcode'),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () async {
+                          bool success = await editperipheral(
+                            Monitor: MonitorController.text,
+                            Keyboard: KeyboardController.text,
+                            Mouse: MouseController.text,
+                            Printer: PrinterController.text,
+                            UPS: UPSController.text,
+                            cashBox: cashBoxController.text,
+                            Barcode: BarcodeController.text,
+                            Deviceid: Deviceid, // تمرير Deviceid كـ int
+                            context: context,
+                          );
+                          if (success) {
+                            Navigator.pop(context, true); // الرجوع مع القيمة true
+                            Navigator.pop(context); // الرجوع مع القيمة true
+                            Navigator.pop(context); // الرجوع مع القيمة true
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          elevation: 5,
+                        ),
+                        child: const Text(
+                          'Edit Properties',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-            TextField(
-              controller: MouseController,
-              decoration: const InputDecoration(labelText: 'New RAM'),
-            ),
-            TextField(
-              controller: PrinterController,
-              decoration: const InputDecoration(labelText: 'New Hard'),
-            ),
-            TextField(
-              controller: UPSController,
-              decoration: const InputDecoration(labelText: 'New Graphics'),
-            ),
-            TextField(
-              controller: cashBoxController,
-              decoration: const InputDecoration(labelText: 'New Power Supply'),
-            ),
-            TextField(
-              controller: BarcodeController,
-              decoration: const InputDecoration(labelText: 'New OS'),
-            ),
-            const SizedBox(height: 20), // إضافة مسافة إضافية
-            ElevatedButton(
-              onPressed: () async {
-                bool success = await editperipheral(
-                  Monitor: MonitorController.text,
-                  Keyboard: KeyboardController.text,
-                  Mouse: MouseController.text,
-                  Printer: PrinterController.text,
-                  UPS: UPSController.text,
-                  cashBox: cashBoxController.text,
-                  Barcode: BarcodeController.text,
-                  Deviceid: Deviceid, // تمرير Deviceid كـ int
-                  context: context,
-                );
-                if (success) {
-                  Navigator.pop(context, true); // الرجوع مع القيمة true
+          ),
+        ],
+      ),
+    );
+  }
 
-                }
-                // if (success) {
-                //   Navigator.pushReplacement(
-                //     context,
-                //     MaterialPageRoute(builder: (context) => TargetPage()), // قم بتحديد الصفحة المطلوبة
-                //   );
-                // }
-
-              },
-              child: const Text('edit Properties'), // تصحيح النص إلى "Add Properties"
-            ),
-          ],
-        ),
+  Widget _buildTextField(TextEditingController controller, String label) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(),
+        filled: true,
+        fillColor: Colors.white70, // لون خلفية الحقل
       ),
     );
   }
@@ -103,7 +141,6 @@ class EditPeripherals extends StatelessWidget {
     required String UPS,
     required String cashBox,
     required String Barcode,
-
     required int Deviceid,
     required BuildContext context,
   }) async {
@@ -125,14 +162,14 @@ class EditPeripherals extends StatelessWidget {
         'Printer': Printer,
         'UPS': UPS,
         'cashBox': cashBox,
-        'Barcode':Barcode,
+        'Barcode': Barcode,
       }),
     );
 
     if (response.statusCode == 200) {
       // نجاح العملية
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('editDevice updated successfully')),
+        const SnackBar(content: Text('Peripherals updated successfully')),
       );
       return true;
     } else {

@@ -21,7 +21,18 @@ class EditDevice extends StatelessWidget {
         title: const Text('Edit Device '),
       ),
       drawer: NavDrawer(),
-      body: Padding(
+      body:Stack(
+          children: [
+      // الخلفية
+      Container(
+      decoration: const BoxDecoration(
+      image: DecorationImage(
+          image: AssetImage('lib/images/editdevice.png'), // مسار صورة الخلفية
+      fit: BoxFit.cover, // جعل الصورة تغطي كامل الخلفية
+    ),
+    ),
+    ),
+      Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -56,12 +67,12 @@ class EditDevice extends StatelessWidget {
                   Navigator.pop(context, true); // الرجوع مع القيمة true
                 }
               },
-              child: const Text('Edit User'),
+              child: const Text('Edit Device'),
             ),
           ],
         ),
       ),
-    );
+    ]));
   }
 
   Future<bool> editdevice({

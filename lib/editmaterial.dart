@@ -14,90 +14,133 @@ class EditMaterial extends StatelessWidget {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController quantityController = TextEditingController();
     final TextEditingController priceController = TextEditingController();
-    GlobalKey<FormState> editmaterialForm = GlobalKey();
+    GlobalKey<FormState> editMaterialForm = GlobalKey();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edi Material'),
+        title: const Text('Edit Material'),
+        backgroundColor: Colors.teal, // تخصيص لون شريط العنوان
       ),
       drawer: NavDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: editmaterialForm,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              TextFormField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: 'New material Name'),
-                validator: (value){
-                  if(value!.length<2){
-                    return ' the name must be ';
-                  }
-                  return null;
-                },
+      body: Stack(
+        children: [
+          // الخلفية
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('lib/images/editmaterial.png'), // مسار صورة الخلفية
+                fit: BoxFit.cover, // جعل الصورة تغطي كامل الخلفية
               ),
-              TextFormField(
-                controller: codeController,
-                decoration: const InputDecoration(labelText: 'New material code'),
-                obscureText: true,
-                validator: (value){
-                  if(value!.length<1){
-                    return ' the code must be ';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: quantityController,
-                decoration: const InputDecoration(labelText: 'New material quantity'),
-
-
-              ),
-              TextFormField(
-                controller: priceController,
-                decoration: const InputDecoration(labelText: 'New material price'),
-
-                validator: (value){
-                  if(value!.length<2){
-                    return ' the price must be ';
-                  }
-                  return null;
-                },
-              ),
-
-              ElevatedButton(
-                onPressed: () async {
-                  // استدعاء دالة تعديل المستخدم وانتظار النتيجة
-                  if(editmaterialForm.currentState!.validate()){
-                    bool success =false;
-                    await editmaterial(
-                      materialId: materialId,
-                      name: nameController.text,
-                      code: codeController.text,
-                      quantity:quantityController.text,
-                      price:priceController.text,
-                      context: context,
-                    );
-
-                    // إذا نجحت العملية، الرجوع إلى الصفحة السابقة
-                    // if (success) {
-                    //    Navigator.pop(context, true); // الرجوع مع القيمة true
-                    //  }else{}
-                  }
-
-                },
-                child: const Text('Edit material'),
-              ),
-            ],
+            ),
           ),
-        ),
+          // محتوى الصفحة
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20), // زوايا مستديرة
+                ),
+                elevation: 10, // ظل الكارد
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Form(
+                    key: editMaterialForm,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min, // تعديل حجم العمود
+                      children: <Widget>[
+                        Text(
+                          'Edit Material',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        _buildTextField(nameController, 'New Material Name', (value) {
+                          if (value!.length < 2) {
+                            return 'The name must be at least 2 characters.';
+                          }
+                          return null;
+                        }),
+                        const SizedBox(height: 20),
+                        _buildTextField(codeController, 'New Material Code', (value) {
+                          if (value!.isEmpty) {
+                            return 'The code must not be empty.';
+                          }
+                          return null;
+                        }, obscureText: true),
+                        const SizedBox(height: 20),
+                        _buildTextField(quantityController, 'New Material Quantity', null),
+                        const SizedBox(height: 20),
+                        _buildTextField(priceController, 'New Material Price', (value) {
+                          if (value!.length < 2) {
+                            return 'The price must be at least 2 characters.';
+                          }
+                          return null;
+                        }),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () async {
+                            // استدعاء دالة تعديل المستخدم وانتظار النتيجة
+                            if (editMaterialForm.currentState!.validate()) {
+                              bool success = false;
+                              success = await editMaterial(
+                                materialId: materialId,
+                                name: nameController.text,
+                                code: codeController.text,
+                                quantity: quantityController.text,
+                                price: priceController.text,
+                                context: context,
+                              );
+
+                              // إذا نجحت العملية، الرجوع إلى الصفحة السابقة
+                              if (success) {
+                                Navigator.pop(context, true); // الرجوع مع القيمة true
+                              }
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.teal,
+                            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            elevation: 5,
+                          ),
+                          child: const Text(
+                            'Edit Material',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Future<bool> editmaterial({
+  Widget _buildTextField(TextEditingController controller, String label, String? Function(String?)? validator, {bool obscureText = false}) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(),
+        filled: true,
+        fillColor: Colors.white70, // لون خلفية الحقل
+      ),
+      obscureText: obscureText,
+      validator: validator,
+    );
+  }
+
+  Future<bool> editMaterial({
     required int materialId,
     required String name,
     required String code,
@@ -122,11 +165,10 @@ class EditMaterial extends StatelessWidget {
     if (response.statusCode == 200) {
       // نجاح العملية
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('edit Material updated successfully')),
+        const SnackBar(content: Text('Material updated successfully')),
       );
       return true;
-    }
-    else {
+    } else {
       // فشل العملية
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(response.body)),

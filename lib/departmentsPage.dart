@@ -20,7 +20,7 @@ class DepartmentsPage extends StatefulWidget {
 
 class _ShowDepartmentsState extends State<DepartmentsPage> {
   late Future<List<ShowDepartments>> futureDepartments;
-
+  String? role;
   @override
   void initState() {
     super.initState();
@@ -30,7 +30,7 @@ class _ShowDepartmentsState extends State<DepartmentsPage> {
   Future<List<ShowDepartments>> fetchDepartments() async {
     final prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token') ?? '';
-
+    role = prefs.getString('role') ?? '';
     final response = await http.get(
       Uri.parse('$urlbase/departmentsInFloor/${widget.floorId}'),
       headers: {
@@ -67,6 +67,7 @@ class _ShowDepartmentsState extends State<DepartmentsPage> {
               },
               child: const Text('Cancel'),
             ),
+
             ElevatedButton(
               onPressed: () async {
                 bool success = await deleteDepartment(departmentId, context);
@@ -79,7 +80,8 @@ class _ShowDepartmentsState extends State<DepartmentsPage> {
               },
               child: const Text('Delete'),
             ),
-          ],
+        ]
+
         );
       },
     );
@@ -155,12 +157,25 @@ class _ShowDepartmentsState extends State<DepartmentsPage> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              DevicesPage(departmentId: departments[index].id!),
+                        PageRouteBuilder(
+                          pageBuilder: (context, animation, secondaryAnimation) =>  DevicesPage(departmentId: departments[index].id!),
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            const begin = Offset(0.0, 1.0);
+                            const end = Offset.zero; // ينتهي في المكان الحالي
+                            const curve = Curves.easeInOut;
+
+                            var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                            var offsetAnimation = animation.drive(tween);
+
+                            return SlideTransition(
+                              position: offsetAnimation,
+                              child: child,
+                            );
+                          },
                         ),
                       );
                     },
+
                     child: Card(
                       elevation: 5,
                       child: Padding(
@@ -196,6 +211,7 @@ class _ShowDepartmentsState extends State<DepartmentsPage> {
                                   },
                                   child: const Text('Edit'),
                                 ),
+                               if(role=='1')...[
                                 ElevatedButton(
                                   onPressed: () {
                                     showDeleteDialog(
@@ -203,6 +219,7 @@ class _ShowDepartmentsState extends State<DepartmentsPage> {
                                   },
                                   child: const Text('Delete'),
                                 ),
+                                ],
                               ],
                             ),
                           ],

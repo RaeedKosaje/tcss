@@ -35,31 +35,31 @@ class AddPeripherals extends StatelessWidget {
           children: <Widget>[
             TextField(
               controller: MonitorController,
-              decoration: const InputDecoration(labelText: 'New CPU'),
+              decoration: const InputDecoration(labelText: 'Monitor'),
             ),
             TextField(
               controller: KeyboardController,
-              decoration: const InputDecoration(labelText: 'New Motherboard'),
+              decoration: const InputDecoration(labelText: 'Keyboard'),
             ),
             TextField(
               controller: MouseController,
-              decoration: const InputDecoration(labelText: 'New RAM'),
+              decoration: const InputDecoration(labelText: 'Mouse'),
             ),
             TextField(
               controller: PrinterController,
-              decoration: const InputDecoration(labelText: 'New Hard'),
+              decoration: const InputDecoration(labelText: 'Printer'),
             ),
             TextField(
               controller: UPSController,
-              decoration: const InputDecoration(labelText: 'New Graphics'),
+              decoration: const InputDecoration(labelText: 'UPS'),
             ),
             TextField(
               controller: cashBoxController,
-              decoration: const InputDecoration(labelText: 'New Power Supply'),
+              decoration: const InputDecoration(labelText: 'cashBox'),
             ),
             TextField(
               controller: BarcodeController,
-              decoration: const InputDecoration(labelText: 'New OS'),
+              decoration: const InputDecoration(labelText: 'Barcode'),
             ),
             const SizedBox(height: 20), // إضافة مسافة إضافية
             ElevatedButton(

@@ -8,14 +8,15 @@ import 'package:untitled1/addproperties.dart';
 import 'package:untitled1/drawer.dart';
 import 'package:untitled1/editProperties.dart';
 import 'package:untitled1/editdevice.dart';
-import 'package:untitled1/createDevice.dart';
 import 'package:untitled1/editperipherals.dart';
 import 'package:untitled1/models/show-properties-model.dart';
 import 'package:untitled1/models/show_devices_model.dart';
+import 'createDevice.dart';
 import 'createHardwarekey.dart';
 import 'createinstallationservice.dart';
 import 'createmaintenanceservice.dart';
 import 'edithardwarekey.dart';
+import 'floorspage.dart';
 import 'main.dart';
 import 'models/create_hardware_key_model.dart';
 import 'models/show_peripherals_model.dart';
@@ -34,6 +35,7 @@ class _ShowDevicesState extends State<DevicesPage> {
   ShowProperties? showProperties;
   Hardwarekey? hardwarekey;
   ShowPeripherals? showPeripherals;
+  String? role;
 
   @override
   void initState() {
@@ -44,6 +46,7 @@ class _ShowDevicesState extends State<DevicesPage> {
   Future<List<ShowDevices>> fetchDevices() async {
     final prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token') ?? '';
+    role = prefs.getString('role') ?? '';
 
     final response = await http.get(
       Uri.parse('$urlbase/devicesInDepartment/${widget.departmentId}'),
@@ -74,51 +77,55 @@ class _ShowDevicesState extends State<DevicesPage> {
     );
     if (response.statusCode == 200) {
       dynamic jsonResponse = json.decode(response.body);
-      setState(() {
+      setState(() {//print(showProperties);
         showProperties = ShowProperties.fromJson(jsonResponse);
       });
     } else {
       setState(() {
-        showProperties = null; // تحديد أن البيانات غير متوفرة
+        showProperties = null;
       });
     }
 
-    final response1 = await http.get(
+    final response2 = await http.get(
       Uri.parse('$urlbase/showPeripherals/$deviceId'),
       headers: {
         'Authorization': 'Bearer $token',
       },
     );
 
-    if (response1.statusCode == 200) {
-      dynamic jsonResponse = json.decode(response1.body);
+    if (response2.statusCode == 200) {
+      dynamic jsonResponse = json.decode(response2.body);
       setState(() {
+        //print(showPeripherals);
         showPeripherals = ShowPeripherals.fromJson(jsonResponse);
       });
     } else {
       setState(() {
-        showPeripherals = null; // تحديد أن البيانات غير متوفرة
+        showPeripherals = null;
       });
-    }
-    final response3 = await http.get(
-      Uri.parse('$urlbase/showHardwarekey/$deviceId'),
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
-    );
 
-    if (response1.statusCode == 200) {
-      dynamic jsonResponse = json.decode(response3.body);
-      setState(() {
-        hardwarekey = Hardwarekey.fromJson(jsonResponse);
-      });
-    } else {
-      setState(() {
-        hardwarekey = null; // تحديد أن البيانات غير متوفرة
-      });
     }
+
+
+  final response3 = await http.get(
+  Uri.parse('$urlbase/showHardwarekey/$deviceId'),
+  headers: {
+  'Authorization': 'Bearer $token',
+  },
+  );
+
+  if (response3.statusCode == 200) {
+  dynamic jsonResponse = json.decode(response3.body);
+  setState(() {
+    //print(hardwarekey);
+  hardwarekey = Hardwarekey.fromJson(jsonResponse);
+  });
+  } else {
+  setState(() {
+  hardwarekey = null; // تحديد أن البيانات غير متوفرة
+  });
   }
-
+}
 
   void showDeleteDialog(BuildContext context, int deviceId) {
     showDialog(
@@ -138,6 +145,8 @@ class _ShowDevicesState extends State<DevicesPage> {
               },
               child: const Text('Cancel'),
             ),
+
+
             ElevatedButton(
               onPressed: () async {
                 bool success = await deletedeDevice(deviceId, context);
@@ -153,6 +162,7 @@ class _ShowDevicesState extends State<DevicesPage> {
           ],
         );
       },
+
     );
   }
 
@@ -182,35 +192,41 @@ class _ShowDevicesState extends State<DevicesPage> {
     }
   }
 
-  void showDeviceSpecifications(BuildContext context) {
+  void showDeviceSpecifications(ShowProperties properties) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('مواصفات الجهاز'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          title: const Text(
+            'مواصفات الجهاز',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Colors.blue,
+            ),
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('CPU: ${showProperties?.cPU ?? "غير موجود"}'),
-              Text(
-                  'Motherboard: ${showProperties?.motherboard ?? "غير موجود"}'),
-              Text('RAM: ${showProperties?.rAM ?? "غير موجود"}'),
-              Text('Hard: ${showProperties?.hard ?? "غير موجود"}'),
-              Text('Graphics: ${showProperties?.graphics ?? "غير موجود"}'),
-              Text(
-                  'Power Supply: ${showProperties?.powerSupply ?? "غير موجود"}'),
-              Text('OS: ${showProperties?.oS ?? "غير موجود"}'),
-              Text('NIC: ${showProperties?.nIC ?? "غير موجود"}'),
-
-              const SizedBox(height: 10), // مسافة بين المواصفات والأزرار
-              // زر تعديل معلومات الجهاز
-              ElevatedButton(
+              _buildSpecificationRow(Icons.memory, 'CPU', properties.cPU),
+              _buildSpecificationRow(Icons.devices, 'Motherboard', properties.motherboard),
+              _buildSpecificationRow(Icons.storage, 'RAM', properties.rAM),
+              _buildSpecificationRow(Icons.hardware_outlined, 'Hard', properties.hard),
+              _buildSpecificationRow(Icons.image, 'Graphics', properties.graphics),
+              _buildSpecificationRow(Icons.bolt, 'Power Supply', properties.powerSupply),
+              _buildSpecificationRow(Icons.computer, 'OS', properties.oS),
+              _buildSpecificationRow(Icons.network_check, 'NIC', properties.nIC),
+              const SizedBox(height: 20),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.edit),
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          EditProperties(Deviceid: showProperties!.id!),
+                      builder: (context) => EditProperties(Deviceid: properties.id!),
                     ),
                   ).then((value) {
                     if (value == true) {
@@ -220,7 +236,7 @@ class _ShowDevicesState extends State<DevicesPage> {
                     }
                   });
                 },
-                child: const Text('تعديل معلومات الجهاز'),
+                label: const Text('تعديل معلومات الجهاز'),
               ),
             ],
           ),
@@ -229,11 +245,25 @@ class _ShowDevicesState extends State<DevicesPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('إغلاق'),
+              child: const Text(
+                'إغلاق',
+                style: TextStyle(color: Colors.red),
+              ),
             ),
           ],
         );
       },
+    );
+  }
+
+  Widget _buildSpecificationRow(IconData icon, String label, String? value) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.blue),
+        const SizedBox(width: 10),
+        Text('$label: ${value ?? "غير موجود"}',
+            style: const TextStyle(fontSize: 16)),
+      ],
     );
   }
 
@@ -242,21 +272,36 @@ class _ShowDevicesState extends State<DevicesPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('الملحقات'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          title: const Text(
+            'الملحقات',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Colors.blue,
+            ),
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('monitor: ${showPeripherals?.monitor ?? "غير موجود"}'),
-              Text('keyboard: ${showPeripherals?.keyboard ?? "غير موجود"}'),
-              Text('mouse: ${showPeripherals?.mouse ?? "غير موجود"}'),
-              Text('printer: ${showPeripherals?.printer ?? "غير موجود"}'),
-              Text('uPS: ${showPeripherals?.uPS ?? "غير موجود"}'),
-              Text('cashBox: ${showPeripherals?.cashBox ?? "غير موجود"}'),
-              Text('barcode: ${showPeripherals?.barcode ?? "غير موجود"}'),
-
-              const SizedBox(height: 10), // مسافة بين المواصفات والأزرار
-              // زر تعديل معلومات الجهاز
-              ElevatedButton(
+              _buildPeripheralRow(
+                  Icons.monitor, 'monitor', showPeripherals?.monitor),
+              _buildPeripheralRow(
+                  Icons.keyboard, 'keyboard', showPeripherals?.keyboard),
+              _buildPeripheralRow(Icons.mouse, 'mouse', showPeripherals?.mouse),
+              _buildPeripheralRow(
+                  Icons.print, 'printer', showPeripherals?.printer),
+              _buildPeripheralRow(
+                  Icons.battery_charging_full, 'uPS', showPeripherals?.uPS),
+              _buildPeripheralRow(
+                  Icons.shopping_bag, 'cashBox', showPeripherals?.cashBox),
+              _buildPeripheralRow(
+                  Icons.qr_code, 'barcode', showPeripherals?.barcode),
+              const SizedBox(height: 20),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.edit),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -272,7 +317,7 @@ class _ShowDevicesState extends State<DevicesPage> {
                     }
                   });
                 },
-                child: const Text('تعديل الملحقات'),
+                label: const Text('تعديل الملحقات'),
               ),
             ],
           ),
@@ -281,11 +326,25 @@ class _ShowDevicesState extends State<DevicesPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('إغلاق'),
+              child: const Text(
+                'إغلاق',
+                style: TextStyle(color: Colors.red),
+              ),
             ),
           ],
         );
       },
+    );
+  }
+
+  Widget _buildPeripheralRow(IconData icon, String label, String? value) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.blue),
+        const SizedBox(width: 10),
+        Text('$label: ${value ?? "غير موجود"}',
+            style: const TextStyle(fontSize: 16)),
+      ],
     );
   }
 
@@ -301,7 +360,7 @@ class _ShowDevicesState extends State<DevicesPage> {
               Text('type: ${hardwarekey?.type ?? "غير موجود"}'),
               Text('serial: ${hardwarekey?.sereal ?? "غير موجود"}'),
               Text('exDate: ${hardwarekey?.exDate ?? "غير موجود"}'),
-              Text('description: ${hardwarekey?.description ?? "غير موجود"}'),
+              Text('description: ${hardwarekey?.description ?? "رينغير موجود"}'),
 
               const SizedBox(height: 10), // مسافة بين المواصفات والأزرار
 
@@ -342,292 +401,315 @@ class _ShowDevicesState extends State<DevicesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Devices Page'),
-      ),
-      drawer: NavDrawer(),
-      body: FutureBuilder(
-        future: fetchDevices(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10.0,
-                mainAxisSpacing: 10.0,
-              ),
-              itemCount: futureDevices.length,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                    );
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text('Devices Page'),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.home),
+              tooltip: 'Go to Home',
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Navigating to Home...'),
+                    duration: Duration(seconds: 1),
+                  ),
+                );
 
-                    device(futureDevices[index].id!).then((value) {
-                      Navigator.pop(
-                          context); // إغلاق Dialog التحميل بعد جلب البيانات
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        FloorsPage(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      const begin = Offset(0.1, 0.1);
+                      const end = Offset.zero;
+                      const curve = Curves.easeInOut;
 
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text(futureDevices[index].name ?? 'No Name'),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
+                      var tween = Tween(begin: begin, end: end)
+                          .chain(CurveTween(curve: curve));
+                      var offsetAnimation = animation.drive(tween);
+
+                      return SlideTransition(
+                        position: offsetAnimation,
+                        child: child,
+                      );
+                    },
+                  ),
+                      (route) => false,
+                );
+              },
+            ),
+          ],
+        ),
+        drawer: NavDrawer(),
+        body: FutureBuilder(
+          future: fetchDevices(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                itemCount: futureDevices.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Stack(
+                        children: [
+                          // زر في أعلى يمين الكارد
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: IconButton(
+                              icon: const Icon(Icons.more_vert),
+                              onPressed: () {
+                                device(futureDevices[index].id!);
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+
+                                        ListTile(
+                                          leading: const Icon(
+                                              Icons.info, color: Colors.blue),
+                                          title: const Text('عرض المواصفات'),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                                if (showProperties == null) {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AddProperties(
+                                                        DeviceId: futureDevices[index]
+                                                            .id!,
+                                                      ),
+                                                ),
+                                              ).then((value) {
+                                                if (value == true) {
+                                                  setState(() {
+                                                    fetchDevices();
+                                                  });
+                                                }
+                                              });
+                                            } else {
+                                              showDeviceSpecifications(
+                                                  showProperties!);
+                                            }
+                                          },
+                                        ),
+                                        ListTile(
+                                          leading:  Icon(
+                                              Icons.h_mobiledata, color: Colors.blue),
+                                          title:  Text('دارة الحماية'),
+                                          onTap: () {
+                                             if (hardwarekey == null) {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Creathardwarekey(
+                                                          deviceid:
+                                                          futureDevices[index].id!),
+                                                ),
+                                              ).then((value) {
+                                                if (value == true) {
+                                                  setState(() {
+                                                    fetchDevices();
+                                                  });
+                                                }
+                                              });
+                                            } else {
+                                              showhardwarekey(context);
+                                            }
+
+                                          },
+                                        ),
+                                    if(role=='2')...[
+                                        ListTile(
+                                          leading: const Icon(
+                                              Icons.edit, color: Colors.blue),
+                                          title: const Text('خدمة صيانة'),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CreateMaintenanceService(
+                                                      deviceId: futureDevices[index]
+                                                          .id!,
+                                                    ),
+                                              ),
+                                            ).then((value) {
+                                              if (value == true) {
+                                                setState(() {
+                                                  fetchDevices();
+                                                });
+                                              }
+                                            });
+                                          },
+                                        )],
+                                        // تعديل الجهاز
+                                        ListTile(
+                                          leading: const Icon(
+                                              Icons.edit, color: Colors.blue),
+                                          title: const Text('تعديل الجهاز'),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => EditDevice(
+                                                  Deviceid:
+                                                  futureDevices[index].id!,
+                                                ),
+                                              ),
+                                            ).then((value) {
+                                              if (value == true) {
+                                                setState(() {
+                                                  fetchDevices();
+                                                });
+                                              }
+                                            });
+                                          },
+                                        ),
+                                       if(role=='1')...[
+                                        ListTile(
+                                          leading: const Icon(
+                                              Icons.delete, color: Colors.red),
+                                          title: const Text('حذف الجهاز'),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                            showDeleteDialog(
+                                                context,
+                                                futureDevices[index].id!);
+                                          },
+                                        )],
+                                    if(role=='2')...[
+                                        ListTile(
+                                          leading: const Icon(
+                                              Icons.add, color: Colors.blue),
+                                          title: const Text('خدمة تركيب'),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CreateInstallationService(
+                                                      deviceId: futureDevices[index]
+                                                          .id!,
+                                                    ),
+                                              ),
+                                            ).then((value) {
+                                              if (value == true) {
+                                                setState(() {
+                                                  fetchDevices();
+                                                });
+                                              }
+                                            });
+                                          },
+                                        )],
+                                        // الملحقات
+                                        ListTile(
+                                          leading: const Icon(
+                                              Icons.extension, color: Colors.blue),
+                                          title: const Text('الملحقات'),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                            if (showPeripherals == null) {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AddPeripherals(
+                                                        Deviceid: futureDevices[index]
+                                                            .id!,
+                                                      ),
+                                                ),
+                                              ).then((value) {
+                                                if (value == true) {
+                                                  setState(() {
+                                                    fetchDevices();
+                                                  });
+                                                }
+                                              });
+                                            } else {
+                                              showDeviceper(context);
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                          // محتوى الكارد في الوسط
+                          Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text(
-                                    'تفاصيل الجهاز ${futureDevices[index].name ?? "غير موجودة"}'),
+                                const Icon(Icons.devices,
+                                    size: 50, color: Colors.blue),
                                 const SizedBox(height: 10),
-                                // أزرار جديدة في الـ Dialog
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => EditDevice(
-                                            Deviceid: futureDevices[index].id!),
-                                      ),
-                                    ).then((value) {
-                                      if (value == true) {
-                                        setState(() {
-                                          fetchDevices();
-                                        });
-                                      }
-                                    });
-                                  },
-                                  child: const Text('تعديل الجهاز'),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    showDeleteDialog(
-                                        context, futureDevices[index].id!);
-                                  },
-                                  child: const Text('حذف الجهاز'),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => CreateMaintenanceService(
-
-                                            deviceId: futureDevices[index].id!),
-                                      ),
-                                    ).then((value) {
-                                      if (value == true) {
-                                        setState(() {
-                                          fetchDevices();
-                                        });
-                                      }
-                                    });
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue, // لون الخلفية
-                                    foregroundColor: Colors.white, // لون النص
-                                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12), // حشوة الزر
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12), // الزوايا المستديرة
-                                    ),
-                                    elevation: 5, // ارتفاع الظل
+                                Text(
+                                  futureDevices[index].name ?? 'No Name',
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  child: const Text(
-                                    'خدمة صيانة',
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold), // تخصيص النص
-                                  ),
-                                ),
-
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => CreateInstallationService(
-
-                                            deviceId: futureDevices[index].id!),
-                                      ),
-                                    ).then((value) {
-                                      if (value == true) {
-                                        setState(() {
-                                          fetchDevices();
-                                        });
-                                      }
-                                    });
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue, // لون الخلفية
-                                    foregroundColor: Colors.white, // لون النص
-                                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12), // حشوة الزر
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12), // الزوايا المستديرة
-                                    ),
-                                    elevation: 5, // ارتفاع الظل
-                                  ),
-                                  child: const  Text(
-                                    'خدمة تركيب',
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold), // تخصيص النص
-                                  ),
-                                  ),
-
-                                // زر مواصفات الجهاز
-                                ElevatedButton(
-                                  onPressed: () {
-                                    if (showProperties == null) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => AddProperties(
-                                              Deviceid:
-                                                  futureDevices[index].id!),
-                                        ),
-                                      ).then((value) {
-                                        if (value == true) {
-                                          setState(() {
-                                            fetchDevices();
-                                          });
-                                        }
-                                      });
-                                    } else {
-                                      showDeviceSpecifications(context);
-                                    }
-                                  },
-                                  child: const Text('مواصفات الجهاز'),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    if (hardwarekey == null) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              Creathardwarekey(
-                                                  deviceid:
-                                                      futureDevices[index].id!),
-                                        ),
-                                      ).then((value) {
-                                        if (value == true) {
-                                          setState(() {
-                                            fetchDevices();
-                                          });
-                                        }
-                                      });
-                                    } else {
-                                      showhardwarekey(context);
-                                    }
-                                  },
-                                  child: const Text('hard ware key'),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    if (showPeripherals == null) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => AddPeripherals(
-                                              Deviceid:
-                                                  futureDevices[index].id!),
-                                        ),
-                                      ).then((value) {
-                                        if (value == true) {
-                                          setState(() {
-                                            fetchDevices();
-                                          });
-                                        }
-                                      });
-                                    } else {
-                                    showDeviceper(context);
-                                    }
-                                  },
-                                  child: const Text(' الملحقات'),
+                                  textAlign: TextAlign.center,
                                 ),
                               ],
                             ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('إغلاق النافذة'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }).catchError((error) {
-                      Navigator.pop(context);
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Error'),
-                            content:
-                                Text('حدث خطأ أثناء جلب بيانات الجهاز: $error'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('إغلاق'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    });
-                  },
-                  child: Card(
-                    elevation: 5,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.devices),
-                          Text(
-                            futureDevices[index].name ?? 'No Name',
-                            style: const TextStyle(fontSize: 18),
                           ),
-                          const SizedBox(height: 30),
                         ],
                       ),
                     ),
-                  ),
-                );
-              },
-            );
-          } else if (snapshot.hasError) {
-            return Text("${snapshot.error}");
-          }
-          return const Center(child: CircularProgressIndicator());
-        },
-      ),
-      floatingActionButton: FanFloatingMenu(
-        menuItems: [
-          FanMenuItem(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      Createdevice(departmentId: widget.departmentId),
-                ),
-              ).then((value) {
-                if (value == true) {
-                  setState(() {
-                    fetchDevices();
-                  });
-                }
-              });
-            },
-            icon: Icons.add,
-            title: 'Add Device',
-          ),
-        ],
-      ),
-    );
+                  );
+                },
+              );
+            } else if (snapshot.hasError) {
+              return Center(child: Text("${snapshot.error}"));
+            }
+            return const Center(child: CircularProgressIndicator());
+          },
+
+    ),
+        floatingActionButton: FanFloatingMenu(
+    menuItems: [
+    FanMenuItem(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              Createdevice(departmentId: widget.departmentId),
+        ),
+      ).then((value) {
+        if (value == true) {
+          setState(() {
+            fetchDevices();
+          });
+        }
+      });
+    },
+    icon: Icons.add,
+    title: 'Add Device',
+    ),
+    ],
+    ), );
   }
 }
+
+

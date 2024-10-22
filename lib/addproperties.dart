@@ -6,15 +6,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'main.dart';
 
 class AddProperties extends StatelessWidget {
-  final int Deviceid;
+  final int DeviceId;
 
-   AddProperties({
-    super.key,
-    required this.Deviceid // تأكيد أن Deviceid نوعه int
-  });
+  AddProperties({super.key, required this.DeviceId});
 
   @override
   Widget build(BuildContext context) {
+    // إنشاء Controllers للحقول
     final TextEditingController CPUController = TextEditingController(text: "cpu");
     final TextEditingController MotherboardController = TextEditingController(text: "Motherboard");
     final TextEditingController RAMController = TextEditingController(text: "RAM");
@@ -26,74 +24,87 @@ class AddProperties extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Properties'),
+        title: const Text('Edit Device Properties'),
+        backgroundColor: Colors.blueAccent,
       ),
       drawer: NavDrawer(),
-      body: SingleChildScrollView( // إضافة SingleChildScrollView هنا
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start, // تغيير المركز إلى البداية
-          children: <Widget>[
-            TextField(
-              controller: CPUController,
-              decoration: const InputDecoration(labelText: 'New CPU'),
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          elevation: 8,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                _buildTextField(CPUController, 'New CPU'),
+                _buildTextField(MotherboardController, 'New Motherboard'),
+                _buildTextField(RAMController, 'New RAM'),
+                _buildTextField(HardController, 'New Hard'),
+                _buildTextField(GraphicsController, 'New Graphics'),
+                _buildTextField(powerSupplyController, 'New Power Supply'),
+                _buildTextField(OSController, 'New OS'),
+                _buildTextField(NICController, 'New NIC'),
+                const SizedBox(height: 20),
+                Center(
+                  child: ElevatedButton.icon(
+                    icon: const Icon(Icons.save),
+                    label: const Text('Add Properties'),
+                    onPressed: () async {
+                      bool success = await addProperties(
+                        CPU: CPUController.text,
+                        Motherboard: MotherboardController.text,
+                        RAM: RAMController.text,
+                        Hard: HardController.text,
+                        Graphics: GraphicsController.text,
+                        powerSupply: powerSupplyController.text,
+                        OS: OSController.text,
+                        NIC: NICController.text,
+                        deviceId: DeviceId,
+                        context: context,
+                      );
+                      if (success) {
+                        Navigator.pop(context, true);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            TextField(
-              controller: MotherboardController,
-              decoration: const InputDecoration(labelText: 'New Motherboard'),
-            ),
-            TextField(
-              controller: RAMController,
-              decoration: const InputDecoration(labelText: 'New RAM'),
-            ),
-            TextField(
-              controller: HardController,
-              decoration: const InputDecoration(labelText: 'New Hard'),
-            ),
-            TextField(
-              controller: GraphicsController,
-              decoration: const InputDecoration(labelText: 'New Graphics'),
-            ),
-            TextField(
-              controller: powerSupplyController,
-              decoration: const InputDecoration(labelText: 'New Power Supply'),
-            ),
-            TextField(
-              controller: OSController,
-              decoration: const InputDecoration(labelText: 'New OS'),
-            ),
-            TextField(
-              controller: NICController,
-              decoration: const InputDecoration(labelText: 'New NIC'),
-            ),
-            const SizedBox(height: 20), // إضافة مسافة إضافية
-            ElevatedButton(
-              onPressed: () async {
-                bool success = await addtproperties(
-                  CPU: CPUController.text,
-                  Motherboard: MotherboardController.text,
-                  RAM: RAMController.text,
-                  Hard: HardController.text,
-                  Graphics: GraphicsController.text,
-                  powerSupply: powerSupplyController.text,
-                  OS: OSController.text,
-                  NIC: NICController.text,
-                  Deviceid: Deviceid, // تمرير Deviceid كـ int
-                  context: context,
-                );
-                if (success) {
-                  Navigator.pop(context, true); // الرجوع مع القيمة true
-                }
-              },
-              child: const Text('Add Properties'), // تصحيح النص إلى "Add Properties"
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  Future<bool> addtproperties({
+  // دالة لبناء حقول النصوص مع تصميم متناسق
+  Widget _buildTextField(TextEditingController controller, String label) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(),
+          filled: true,
+          fillColor: Colors.white70,
+        ),
+      ),
+    );
+  }
+
+  // دالة لإضافة الخصائص
+  Future<bool> addProperties({
     required String CPU,
     required String Motherboard,
     required String RAM,
@@ -102,13 +113,13 @@ class AddProperties extends StatelessWidget {
     required String powerSupply,
     required String OS,
     required String NIC,
-    required int Deviceid, // تغيير النوع إلى int
+    required int deviceId,
     required BuildContext context,
   }) async {
     final prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token') ?? '';
 
-    final Uri url = Uri.parse('$urlbase/createProperty/$Deviceid'); // استخدام Deviceid كـ int
+    final Uri url = Uri.parse('$urlbase/createProperty/$deviceId');
 
     final response = await http.post(
       url,
@@ -129,13 +140,11 @@ class AddProperties extends StatelessWidget {
     );
 
     if (response.statusCode == 200) {
-      // نجاح العملية
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('editDevice updated successfully')),
+        const SnackBar(content: Text('Device properties updated successfully')),
       );
       return true;
     } else {
-      // فشل العملية
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(response.body)),
       );

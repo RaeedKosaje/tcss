@@ -8,14 +8,22 @@ import 'package:untitled1/models/user_model.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  token = prefs.getString('token') ?? '';
-  runApp(MyApp());
+  String token = prefs.getString('token') ?? '';
+  String role = prefs.getString('role_id') ?? '';
+  String name = prefs.getString('name') ?? '';
+
+  runApp(MyApp(token: token, role: role, name: name));
 }
 
 String urlbase = "http://10.0.2.2:8000/api";
-String token = '';
 
 class MyApp extends StatelessWidget {
+  final String token;
+  final String role;
+  final String name;
+
+  MyApp({required this.token, required this.role, required this.name});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,7 +31,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.teal,
         colorScheme: ColorScheme.fromSwatch().copyWith(
-          secondary: Colors.tealAccent, // هذا يستبدل accentColor
+          secondary: Colors.tealAccent,
         ),
         scaffoldBackgroundColor: Colors.white,
       ),
@@ -72,6 +80,7 @@ class _LoginPageState extends State<LoginPage> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('name', name);
       await prefs.setString('token', userModel!.data!.accessToken!);
+      await prefs.setString('role', userModel!.data!.user!.roleId.toString());
 
       Navigator.pushReplacement(
         context,
@@ -98,14 +107,11 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const SizedBox(height: 80),
-            // Logo or App Name
-            Text(
-              "Welcome Back!",
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.teal,
-              ),
+
+            // استبدال النص بصورة
+            Image.asset(
+              'lib/images/login.png', // تأكد من تعديل المسار إلى مسار الصورة
+              height: 100, // يمكنك تعديل الارتفاع
             ),
             const SizedBox(height: 16),
             Text(
@@ -151,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
                 filled: true,
                 fillColor: Colors.grey[200],
               ),
-              obscureText: _obscurePassword, // استخدم القيمة للتحكم في إخفاء/إظهار النص
+              obscureText: _obscurePassword,
             ),
             const SizedBox(height: 20),
 
@@ -169,8 +175,8 @@ class _LoginPageState extends State<LoginPage> {
                 : ElevatedButton(
               onPressed: _login,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal, // primary استبدل بـ backgroundColor
-                foregroundColor: Colors.white, // onPrimary استبدل بـ foregroundColor
+                backgroundColor: Colors.teal,
+                foregroundColor: Colors.white,
                 padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),

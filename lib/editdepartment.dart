@@ -17,43 +17,94 @@ class EditDepartment extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit User'),
+        title: const Text('Edit Department'),
+        backgroundColor: Colors.teal, // تخصيص لون شريط العنوان
       ),
       drawer: NavDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextField(
-              controller: nameController,
-              decoration:
-                  const InputDecoration(labelText: 'New department Name'),
+      body: Stack(
+        children: [
+          // الخلفية
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('lib/images/editdepartment.png'), // مسار صورة الخلفية
+                fit: BoxFit.cover, // جعل الصورة تغطي كامل الخلفية
+              ),
             ),
-            TextField(
-              controller: noteController,
-              decoration:
-                  const InputDecoration(labelText: 'New department note'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                // استدعاء دالة تعديل المستخدم وانتظار النتيجة
-                bool success = await editdepartment(
-                  departmentid: departmentid,
-                  name: nameController.text,
-                  note: noteController.text,
-                  context: context,
-                );
+          ),
+          // محتوى الصفحة
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20), // زوايا مستديرة
+                ),
+                elevation: 10, // ظل الكارد
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min, // تعديل حجم العمود
+                    children: <Widget>[
+                      Text(
+                        'Edit Department',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.teal,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      _buildTextField(nameController, 'New Department Name'),
+                      const SizedBox(height: 20),
+                      _buildTextField(noteController, 'New Department Note'),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () async {
+                          bool success = await editdepartment(
+                            departmentid: departmentid,
+                            name: nameController.text,
+                            note: noteController.text,
+                            context: context,
+                          );
 
-                // إذا نجحت العملية، الرجوع إلى الصفحة السابقة
-                if (success) {
-                  Navigator.pop(context, true); // الرجوع مع القيمة true
-                }
-              },
-              child: const Text('Edit User'),
+                          // إذا نجحت العملية، الرجوع إلى الصفحة السابقة
+                          if (success) {
+                            Navigator.pop(context, true); // الرجوع مع القيمة true
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          elevation: 5,
+                        ),
+                        child: const Text(
+                          'Edit Department',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(),
+        filled: true,
+        fillColor: Colors.white70, // لون خلفية الحقل
       ),
     );
   }
@@ -81,13 +132,13 @@ class EditDepartment extends StatelessWidget {
     if (response.statusCode == 200) {
       // نجاح العملية
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('editDepartment updated successfully')),
+        const SnackBar(content: Text('Edit Department updated successfully')),
       );
       return true;
     } else {
       // فشل العملية
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to update editDepartment')),
+        const SnackBar(content: Text('Failed to update Edit Department')),
       );
       return false;
     }

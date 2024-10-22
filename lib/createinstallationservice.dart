@@ -55,111 +55,164 @@ class _CreateInstallationServiceState extends State<CreateInstallationService> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Installation Service'),
+        backgroundColor: Colors.blueAccent,
       ),
       drawer: NavDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextFormField(
-              controller: descriptionController,
-              decoration: const InputDecoration(labelText: 'Description'),
-            ),
-            const SizedBox(height: 20),
-            materials.isEmpty
-                ? const CircularProgressIndicator() // إظهار مؤشر تحميل أثناء جلب المواد
-                : DropdownButtonFormField<int>(
-              value: selectedMaterialId,
-              onChanged: (int? newValue) {
-                setState(() {
-                  selectedMaterialId = newValue;
-                });
-              },
-              items: materials.map<DropdownMenuItem<int>>((Showmaterial material) {
-                return DropdownMenuItem<int>(
-                  value: material.id!, // تأكد من أن material.id ليس null
-                  child: Text(material.name ?? 'No Name'),
-                );
-              }).toList(),
-              decoration: const InputDecoration(labelText: 'Select Material'),
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: quantityController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Quantity'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                if (selectedMaterialId != null && quantityController.text.isNotEmpty) {
-                  setState(() {
-                    selectedMaterials.add({
-                      'material_id': selectedMaterialId!,
-                      'quantity': int.parse(quantityController.text),
-                    });
-                    selectedMaterialId = null; // إعادة تعيين المادة المختارة
-                    quantityController.clear(); // إعادة تعيين الحقل
-                  });
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please select material and enter quantity')),
-                  );
-                }
-              },
-              child: const Text('Add Material'),
-            ),
-            const SizedBox(height: 20),
-            // عرض المواد المضافة
-            Expanded(
-              child: ListView.builder(
-                itemCount: selectedMaterials.length,
-                itemBuilder: (context, index) {
-                  // البحث عن المادة في القائمة بناءً على `material_id` من `selectedMaterials`
-                  Showmaterial? material = materials.firstWhere(
-                        (element) => element.id == selectedMaterials[index]['material_id'],
-                    orElse: () => Showmaterial(id: null, name: 'Unknown'),
-                  );
-
-                  return ListTile(
-                    title: Text('Material: ${material.name ?? 'Unknown'}'),
-                    subtitle: Text('Quantity: ${selectedMaterials[index]['quantity']}'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () {
-                        setState(() {
-                          selectedMaterials.removeAt(index); // إزالة المادة من القائمة
-                        });
-                      },
-                    ),
-                  );
-                },
+      body: Stack(
+        children: [
+          // خلفية الصفحة
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('lib/images/createinstallationservice.png'), // صورة الخلفية
+                fit: BoxFit.cover,
               ),
             ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              elevation: 10,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    TextFormField(
+                      controller: descriptionController,
+                      decoration: const InputDecoration(
+                        labelText: 'Description',
+                        border: OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white70,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    materials.isEmpty
+                        ? const CircularProgressIndicator() // مؤشر تحميل أثناء جلب المواد
+                        : DropdownButtonFormField<int>(
+                      value: selectedMaterialId,
+                      onChanged: (int? newValue) {
+                        setState(() {
+                          selectedMaterialId = newValue;
+                        });
+                      },
+                      items: materials.map<DropdownMenuItem<int>>((Showmaterial material) {
+                        return DropdownMenuItem<int>(
+                          value: material.id!,
+                          child: Text(material.name ?? 'No Name'),
+                        );
+                      }).toList(),
+                      decoration: const InputDecoration(
+                        labelText: 'Select Material',
+                        border: OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white70,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: quantityController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: 'Quantity',
+                        border: OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white70,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.add),
+                      label: const Text('Add Material'),
+                      onPressed: () {
+                        if (selectedMaterialId != null && quantityController.text.isNotEmpty) {
+                          setState(() {
+                            selectedMaterials.add({
+                              'material_id': selectedMaterialId!,
+                              'quantity': int.parse(quantityController.text),
+                            });
+                            selectedMaterialId = null;
+                            quantityController.clear();
+                          });
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Please select material and enter quantity')),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueAccent,
+                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: selectedMaterials.length,
+                        itemBuilder: (context, index) {
+                          Showmaterial? material = materials.firstWhere(
+                                (element) => element.id == selectedMaterials[index]['material_id'],
+                            orElse: () => Showmaterial(id: null, name: 'Unknown'),
+                          );
 
-            ElevatedButton(
-              onPressed: () async {
-                if (selectedMaterials.isNotEmpty) {
-                  bool success = await createInstallationService(
-                    description: descriptionController.text,
-                    materials: selectedMaterials,
-                    deviceId: widget.deviceId,
-                    context: context,
-                  );
-                  if (success) {
-                    Navigator.pop(context, true);
-                  }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please add at least one material')),
-                  );
-                }
-              },
-              child: const Text('Create Installation Service'),
+                          return Card(
+                            child: ListTile(
+                              title: Text('Material: ${material.name ?? 'Unknown'}'),
+                              subtitle: Text('Quantity: ${selectedMaterials[index]['quantity']}'),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.delete, color: Colors.red),
+                                onPressed: () {
+                                  setState(() {
+                                    selectedMaterials.removeAt(index);
+                                  });
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.check),
+                      label: const Text('Create Installation Service'),
+                      onPressed: () async {
+                        if (selectedMaterials.isNotEmpty) {
+                          bool success = await createInstallationService(
+                            description: descriptionController.text,
+                            materials: selectedMaterials,
+                            deviceId: widget.deviceId,
+                            context: context,
+                          );
+                          if (success) {
+                            Navigator.pop(context, true);
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Please add at least one material')),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -183,13 +236,13 @@ class _CreateInstallationServiceState extends State<CreateInstallationService> {
       },
       body: jsonEncode({
         'description': description,
-        'materials': materials, // إرسال قائمة المواد
+        'materials': materials,
       }),
     );
 
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Create installation service successfully')),
+        const SnackBar(content: Text('Installation service created successfully')),
       );
       return true;
     } else {

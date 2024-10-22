@@ -13,6 +13,23 @@ class NavDrawer extends StatefulWidget {
 }
 
 class _NavDrawerState extends State<NavDrawer> {
+  String role = '';
+  String name = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserRole();
+  }
+
+  Future<void> _loadUserRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      role = prefs.getString('role') ?? '';
+       name = prefs.getString('name') ?? ''; // افترض أن الدور مخزن كـ string
+    });
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -27,13 +44,13 @@ class _NavDrawerState extends State<NavDrawer> {
           // Drawer Header
           UserAccountsDrawerHeader(
             accountName: Text(
-              'Support IT',
+              'town center',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
             ),
-            accountEmail: Text('town center'),
+            accountEmail: Text('Support IT         $name'),
             currentAccountPicture: CircleAvatar(
-              // backgroundImage: AssetImage('assets/drawerA.png'),
-            ),
+                // backgroundImage: AssetImage('assets/drawerA.png'),
+                ),
             decoration: BoxDecoration(
               color: Colors.teal, // Change to your app's primary color
             ),
@@ -44,18 +61,21 @@ class _NavDrawerState extends State<NavDrawer> {
             icon: Icons.shopping_bag,
             text: 'Show Material',
             onTap: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => ShowMaterials()),
               );
             },
-          ),_buildDrawerItem(
+          ),
+          _buildDivider(),
+          _buildDrawerItem(
             icon: Icons.electrical_services_sharp,
-            text: 'show Installation Service',
+            text: 'Show Installation Service',
             onTap: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => ShowInstallationService()),
+                MaterialPageRoute(
+                    builder: (context) => ShowInstallationService()),
               );
             },
           ),
@@ -64,35 +84,39 @@ class _NavDrawerState extends State<NavDrawer> {
             icon: Icons.domain_verification,
             text: 'Show Maintenance Service',
             onTap: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => ShowMaintenanceService()),
+                MaterialPageRoute(
+                    builder: (context) => ShowMaintenanceService()),
               );
             },
           ),
           _buildDivider(),
-          _buildDrawerItem(
-            icon: Icons.report,
-            text: 'Report',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Report()),
-              );
-            },
-          ),
-          _buildDivider(),
-          _buildDrawerItem(
-            icon: Icons.admin_panel_settings,
-            text: 'User',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Showusers()),
-              );
-            },
-          ),
-          _buildDivider(),
+
+          if (role == '1') ...[
+            _buildDrawerItem(
+              icon: Icons.report,
+              text: 'Report',
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => Report()),
+                );
+              },
+            ),
+            _buildDivider(),
+            _buildDrawerItem(
+              icon: Icons.admin_panel_settings,
+              text: 'User',
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => Showusers()),
+                );
+              },
+            ),
+            _buildDivider(),
+          ],
           _buildDrawerItem(
             icon: Icons.logout,
             text: 'Logout',
@@ -109,8 +133,11 @@ class _NavDrawerState extends State<NavDrawer> {
     );
   }
 
-  Widget _buildDrawerItem(
-      {required IconData icon, required String text, required GestureTapCallback onTap}) {
+  Widget _buildDrawerItem({
+    required IconData icon,
+    required String text,
+    required GestureTapCallback onTap,
+  }) {
     return ListTile(
       title: Text(
         text,

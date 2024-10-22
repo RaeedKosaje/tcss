@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:untitled1/drawer.dart';
 import 'package:untitled1/edituser.dart';
+import 'package:untitled1/floorspage.dart';
 import 'creat.dart';
 import 'main.dart';
 import 'models/show_users.dart';
@@ -169,7 +170,45 @@ class _ShowUserState extends State<Showusers> {
       appBar: AppBar(
         title: Text('Show Users'),
         backgroundColor: Colors.teal,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.home),
+            tooltip: 'Go to Home',
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Navigating to Home...'),
+                  duration: Duration(seconds: 1),
+                ),
+              );
+
+              Navigator.pushAndRemoveUntil(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) => FloorsPage(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    const begin = Offset(1.0, 0.0); // يبدأ من اليمين
+                    const end = Offset.zero; // ينتهي في المكان الحالي
+                    const curve = Curves.easeInOut;
+
+                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                    var offsetAnimation = animation.drive(tween);
+
+                    return SlideTransition(
+                      position: offsetAnimation,
+                      child: child,
+                    );
+                  },
+                ),
+                    (route) => false,
+              );
+            },
+          ),
+
+
+        ],
       ),
+
       drawer: NavDrawer(),
       body: FutureBuilder<List<ShowUsers>>(
         future: futureUser,
@@ -206,7 +245,6 @@ class _ShowUserState extends State<Showusers> {
                           key: buttonKey, // تعيين المفتاح إلى الزر
                           icon: Icon(Icons.more_vert, color: Colors.teal),
                           onPressed: () {
-                            // استخدام مفتاح الزر لتحديد موقعه
                             RenderBox renderBox = buttonKey.currentContext!.findRenderObject() as RenderBox;
                             Offset offset = renderBox.localToGlobal(Offset.zero);
                             _showPopupMenu(context, users[index], Offset(offset.dx, offset.dy + 30)); // تعديل إزاحة Y
@@ -225,6 +263,8 @@ class _ShowUserState extends State<Showusers> {
         },
       ),
       floatingActionButton: FanFloatingMenu(
+        toggleButtonIconColor: Colors.green.shade300,
+
         menuItems: [
           FanMenuItem(
             onTap: () {

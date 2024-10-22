@@ -17,47 +17,96 @@ class CreateMaterial extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Material'),
+        backgroundColor: Colors.teal, // تخصيص لون شريط العنوان
       ),
       drawer: NavDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(labelText: 'name'),
+      body: Stack(
+        children: [
+          // الخلفية
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('lib/images/creatematerial.png'), // مسار صورة الخلفية
+                fit: BoxFit.cover, // جعل الصورة تغطي كامل الخلفية
+              ),
             ),
-            TextField(
-              controller: quantityController,
-              decoration: const InputDecoration(labelText: 'quantity'),
+          ),
+          // محتوى الصفحة
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20), // زوايا مستديرة
+                ),
+                elevation: 10, // ظل الكارد
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min, // تعديل حجم العمود
+                    children: <Widget>[
+                      Text(
+                        'Create Material',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.teal,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      _buildTextField(nameController, 'Material Name'),
+                      const SizedBox(height: 20),
+                      _buildTextField(quantityController, 'Quantity'),
+                      const SizedBox(height: 20),
+                      _buildTextField(codeController, 'Code'),
+                      const SizedBox(height: 20),
+                      _buildTextField(priceController, 'Price'),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () async {
+                          bool success = await creatematerial(
+                            context: context,
+                            code: codeController.text,
+                            name: nameController.text,
+                            quantity: quantityController.text,
+                            price: priceController.text,
+                          );
+                          if (success) {
+                            Navigator.pop(context, true);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          elevation: 5,
+                        ),
+                        child: const Text(
+                          'Create Material',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-            TextField(
-              controller: codeController,
-              decoration: const InputDecoration(labelText: 'code'),
-            ),
-            TextField(
-              controller: priceController,
-              decoration: const InputDecoration(labelText: 'price'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                bool success = await creatematerial(
-                  context: context,
-                  code: codeController.text,
-                  name: nameController.text,
-                  quantity:quantityController.text,
-                  price:priceController.text
-                );
-                if (success) {
-                  Navigator.pop(context, true);
-                }
-              },
-              child: const Text('Create Material'),
-            ),
-          ],
-        ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(),
+        filled: true,
+        fillColor: Colors.white70, // لون خلفية الحقل
       ),
     );
   }
@@ -67,7 +116,7 @@ class CreateMaterial extends StatelessWidget {
     required String name,
     required String quantity,
     required String price,
-    required String code
+    required String code,
   }) async {
     final prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token') ?? '';
@@ -80,7 +129,7 @@ class CreateMaterial extends StatelessWidget {
         'name': name,
         'quantity': quantity,
         'price': price,
-        'code':code
+        'code': code,
       },
       headers: {
         'Authorization': 'Bearer $token',

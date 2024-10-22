@@ -96,11 +96,25 @@ class _FloorsPageState extends State<FloorsPage> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => DepartmentsPage(floorId: floor.id!),
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => DepartmentsPage(floorId: floor.id!),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              const begin = Offset(1.0, 0.0); // يبدأ من اليمين
+              const end = Offset.zero; // ينتهي في المكان الحالي
+              const curve = Curves.easeInOut;
+
+              var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+              var offsetAnimation = animation.drive(tween);
+
+              return SlideTransition(
+                position: offsetAnimation,
+                child: child,
+              );
+            },
           ),
         );
       },
+
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),

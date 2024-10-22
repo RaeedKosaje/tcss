@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:untitled1/drawer.dart';
+import 'floorspage.dart';
 import 'main.dart';
 import 'models/showI_nstallation_service_model.dart';
 
@@ -111,7 +112,43 @@ class _ShowInstallationServiceState extends State<ShowInstallationService> {
       appBar: AppBar(
         title: Text('Show Installation Service'),
         backgroundColor: Colors.teal,
-      ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.home),
+            tooltip: 'Go to Home',
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Navigating to Home...'),
+                  duration: Duration(seconds: 1),
+                ),
+              );
+
+              Navigator.pushAndRemoveUntil(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) => FloorsPage(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    const begin = Offset(1.0, 0.0); // يبدأ من اليمين
+                    const end = Offset.zero; // ينتهي في المكان الحالي
+                    const curve = Curves.easeInOut;
+
+                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                    var offsetAnimation = animation.drive(tween);
+
+                    return SlideTransition(
+                      position: offsetAnimation,
+                      child: child,
+                    );
+                  },
+                ),
+                    (route) => false,
+              );
+            },
+          ),
+
+
+        ], ),
       drawer: NavDrawer(),
       body: FutureBuilder<List<ShowInstallationServiceModel>>(
         future: futureInstallation,

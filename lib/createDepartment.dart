@@ -17,38 +17,80 @@ class CreateDepartment extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Department'),
+        backgroundColor: Colors.green,
       ),
       drawer: NavDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(labelText: 'Name'),
+      body: Stack(
+        children: [
+          // خلفية الصفحة
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('lib/images/CreateDepartment.png'), // خلفية تناسب الموضوع
+                fit: BoxFit.cover,
+              ),
             ),
-            TextField(
-              controller: noteController,
-              decoration: const InputDecoration(labelText: 'Note'),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              elevation: 8,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    TextField(
+                      controller: nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Name',
+                        border: OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white70,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: noteController,
+                      decoration: const InputDecoration(
+                        labelText: 'Note',
+                        border: OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white70,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.add),
+                      label: const Text('Create Department'),
+                      onPressed: () async {
+                        bool success = await createDepartment(
+                          name: nameController.text,
+                          id: floorId,
+                          note: noteController.text,
+                          context: context,
+                        );
+                        if (success) {
+                          Navigator.pop(context, true);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                bool success = await createDepartment(
-                  name: nameController.text,
-                  id: floorId,
-                  note: noteController.text,
-                  context: context,
-                );
-                if (success) {
-                  Navigator.pop(context, true);
-                }
-              },
-              child: const Text('Create Department'),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -76,13 +118,11 @@ class CreateDepartment extends StatelessWidget {
     );
 
     if (response.statusCode == 200) {
-      // نجاح العملية
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Department created successfully')),
       );
       return true;
     } else {
-      // فشل العملية
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to create department')),
       );

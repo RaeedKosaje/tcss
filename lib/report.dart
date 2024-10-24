@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:untitled1/models/show_users.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'drawer.dart';
 import 'floorspage.dart';
 import 'main.dart';
 import 'models/show_departments_model.dart';
@@ -98,7 +99,8 @@ class _ReportState extends State<Report> {
   }
 
   // Function for date field widget
-  Widget buildDateField(String label, TextEditingController controller, {bool isStartDate = true}) {
+  Widget buildDateField(String label, TextEditingController controller,
+      {bool isStartDate = true}) {
     return TextField(
       controller: controller,
       readOnly: true,
@@ -142,8 +144,10 @@ class _ReportState extends State<Report> {
 
         DateTime? pickedDate = await showDatePicker(
           context: context,
-          initialDate: startDate!, // استخدام تاريخ البداية كالتاريخ الابتدائي
-          firstDate: startDate!, // يجب أن يكون تاريخ البداية هو أول تاريخ يمكن اختياره
+          initialDate: startDate!,
+          // استخدام تاريخ البداية كالتاريخ الابتدائي
+          firstDate: startDate!,
+          // يجب أن يكون تاريخ البداية هو أول تاريخ يمكن اختياره
           lastDate: DateTime(2025), // يمكنك ضبط الحد الأقصى حسب الحاجة
         );
 
@@ -192,7 +196,7 @@ class _ReportState extends State<Report> {
 
 
       try {
-        if(!optionsWithOutDates.contains(selectedOption)) {
+        if (!optionsWithOutDates.contains(selectedOption)) {
           DateTime start = DateTime.parse(startDate);
           DateTime end = DateTime.parse(endDate);
 
@@ -242,7 +246,6 @@ class _ReportState extends State<Report> {
           default:
             print('No API available for this option');
         }
-
       }
       catch (e) {
         // إذا حدث خطأ في تحويل التاريخ
@@ -253,7 +256,6 @@ class _ReportState extends State<Report> {
       }
     }
   }
-
 
 
   // Functions to handle API calls
@@ -315,7 +317,8 @@ class _ReportState extends State<Report> {
     });
   }
 
-  void exportMaintenanceOfDepartment(String startDate, String endDate, String department) {
+  void exportMaintenanceOfDepartment(String startDate, String endDate,
+      String department) {
     exportData('$urlbase/exportMaintenanceOfDepartment', {
       'startDate': startDate,
       'endDate': endDate,
@@ -338,7 +341,8 @@ class _ReportState extends State<Report> {
     });
   }
 
-  void exportInstallationOfDepartment(String startDate, String endDate, String department) {
+  void exportInstallationOfDepartment(String startDate, String endDate,
+      String department) {
     exportData('$urlbase/exportInstallationOfDepartment', {
       'startDate': startDate,
       'endDate': endDate,
@@ -396,7 +400,7 @@ class _ReportState extends State<Report> {
         const SnackBar(content: Text('Failed to load users')),
       );
     }
-  }// Dropdown for users
+  } // Dropdown for users
   List<ShowDevices> Device = [];
   String? selectedDeviceId;
 
@@ -412,7 +416,8 @@ class _ReportState extends State<Report> {
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       setState(() {
-        Device = jsonResponse.map((data) => ShowDevices.fromJson(data)).toList();
+        Device =
+            jsonResponse.map((data) => ShowDevices.fromJson(data)).toList();
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -437,7 +442,8 @@ class _ReportState extends State<Report> {
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       setState(() {
-        departments = jsonResponse.map((data) => ShowDepartments.fromJson(data)).toList();
+        departments =
+            jsonResponse.map((data) => ShowDepartments.fromJson(data)).toList();
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -459,7 +465,7 @@ class _ReportState extends State<Report> {
       items: users.map<DropdownMenuItem<String>>((ShowUsers user) {
         return DropdownMenuItem<String>(
           value: user.id.toString(),
-          child: Text(user.name??'no name'), // عرض اسم المستخدم
+          child: Text(user.name ?? 'no name'), // عرض اسم المستخدم
         );
       }).toList(),
     );
@@ -476,7 +482,7 @@ class _ReportState extends State<Report> {
       items: Device.map<DropdownMenuItem<String>>((ShowDevices Device) {
         return DropdownMenuItem<String>(
           value: Device.id.toString(),
-          child: Text(Device.name??'no name'),
+          child: Text(Device.name ?? 'no name'),
         );
       }).toList(),
     );
@@ -492,10 +498,11 @@ class _ReportState extends State<Report> {
           selectedDepartmentId = newValue;
         });
       },
-      items: departments.map<DropdownMenuItem<String>>((ShowDepartments department) {
+      items: departments.map<DropdownMenuItem<String>>((
+          ShowDepartments department) {
         return DropdownMenuItem<String>(
           value: department.id.toString(),
-          child: Text(department.name??'no name'), // عرض اسم القسم
+          child: Text(department.name ?? 'no name'), // عرض اسم القسم
         );
       }).toList(),
     );
@@ -506,7 +513,7 @@ class _ReportState extends State<Report> {
     super.initState();
     _fetchUsers(); // استدعاء دالة جلب المستخدمين
     _fetchDepartment();
-    _fetchDevice();// استدعاء دالة جلب الأقسام
+    _fetchDevice(); // استدعاء دالة جلب الأقسام
   }
 
   @override
@@ -514,7 +521,8 @@ class _ReportState extends State<Report> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Dynamic Form Example'),
-        backgroundColor: Colors.teal.withOpacity(0.7),
+
+        backgroundColor: Colors.blueAccent,
         actions: [
           IconButton(
             icon: Icon(Icons.home),
@@ -530,13 +538,16 @@ class _ReportState extends State<Report> {
               Navigator.pushAndRemoveUntil(
                 context,
                 PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) => FloorsPage(),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      FloorsPage(),
+                  transitionsBuilder: (context, animation, secondaryAnimation,
+                      child) {
                     const begin = Offset(1.0, 0.0); // يبدأ من اليمين
                     const end = Offset.zero; // ينتهي في المكان الحالي
                     const curve = Curves.easeInOut;
 
-                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                    var tween = Tween(begin: begin, end: end).chain(
+                        CurveTween(curve: curve));
                     var offsetAnimation = animation.drive(tween);
 
                     return SlideTransition(
@@ -549,82 +560,89 @@ class _ReportState extends State<Report> {
               );
             },
           ),
-
-
-        ],),
-      body: Stack(
-    children: [
-    Container(
-    decoration: BoxDecoration(
-    image: DecorationImage(
-    image: AssetImage("lib/images/report.png"), //
-    fit: BoxFit.scaleDown,
-    ),
-    ),
-    ),
-
-    Padding(
-        padding: const EdgeInsets.all(16.0),
-        child:
-        Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              DropdownButton<String>(
-                hint: Text('Select Option'),
-                value: selectedOption,
-                onChanged: (String? newValue) {
-                  startdateController.clear();
-                  enddateController.clear();
-                  userController.clear();
-                  departmentController.clear();
-                  deviceController.clear();
-                  selecteduserId = null;
-                  selectedDepartmentId = null;
-                  selectedDeviceId = null;
-                  startDate = null;
-
-                  setState(() {
-                    selectedOption = newValue; // إعادة تعيين الخيار المحدد
-                    _downloadLink = null; // إعادة تعيين رابط التحميل
-                    _errorMessage = null; // إزالة رسالة الخطأ
-                  });
-                },
-                items: options.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              SizedBox(height: 16.0),
-              buildInputFields(),
-              SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: submitForm,
-                child: Text('Submit'),
-              ),
-              if (_isLoading) CircularProgressIndicator(),
-              if (_errorMessage != null) ...[
-                SizedBox(height: 16.0),
-                Text(
-                  _errorMessage!,
-                  style: TextStyle(color: Colors.red),
-                ),
-              ],
-              if (_downloadLink != null) ...[
-                SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () => _launchURL(_downloadLink!),
-                  child: Text('Download Report', style: TextStyle(fontSize: 18),),
-
-                ),
-              ],
-            ],
-          ),
-        ),
+        ],
       ),
-    ]));
+      drawer: NavDrawer(),
+      body: Column(
+        children: [
+          // الصورة في الأعلى
+          Container(
+            height: 200, // يمكنك تعديل هذا الحجم حسب رغبتك
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("lib/images/report.png"),
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
 
+          // Expanded لضمان أن المحتوى النصي يأخذ المساحة المتبقية
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    DropdownButton<String>(
+                      hint: Text('Select Option'),
+                      value: selectedOption,
+                      onChanged: (String? newValue) {
+                        startdateController.clear();
+                        enddateController.clear();
+                        userController.clear();
+                        departmentController.clear();
+                        deviceController.clear();
+                        selecteduserId = null;
+                        selectedDepartmentId = null;
+                        selectedDeviceId = null;
+                        startDate = null;
+
+                        setState(() {
+                          selectedOption =
+                              newValue; // إعادة تعيين الخيار المحدد
+                          _downloadLink = null; // إعادة تعيين رابط التحميل
+                          _errorMessage = null; // إزالة رسالة الخطأ
+                        });
+                      },
+                      items: options.map<DropdownMenuItem<String>>((
+                          String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 16.0),
+                    buildInputFields(),
+                    SizedBox(height: 16.0),
+                    ElevatedButton(
+                      onPressed: submitForm,
+                      child: Text('Submit'),
+                    ),
+                    if (_isLoading) CircularProgressIndicator(),
+                    if (_errorMessage != null) ...[
+                      SizedBox(height: 16.0),
+                      Text(
+                        _errorMessage!,
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ],
+                    if (_downloadLink != null) ...[
+                      SizedBox(height: 16.0),
+                      ElevatedButton(
+                        onPressed: () => _launchURL(_downloadLink!),
+                        child: Text('Download Report', style: TextStyle(
+                            fontSize: 18)),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

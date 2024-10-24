@@ -12,6 +12,7 @@ import 'main.dart';
 
 class DepartmentsPage extends StatefulWidget {
   final int floorId;
+
   const DepartmentsPage({super.key, required this.floorId});
 
   @override
@@ -21,6 +22,7 @@ class DepartmentsPage extends StatefulWidget {
 class _ShowDepartmentsState extends State<DepartmentsPage> {
   late Future<List<ShowDepartments>> futureDepartments;
   String? role;
+
   @override
   void initState() {
     super.initState();
@@ -54,35 +56,33 @@ class _ShowDepartmentsState extends State<DepartmentsPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Department'),
-          content: const Text(
-            'Are you sure you want to delete this department?',
-            style: TextStyle(fontSize: 18),
-            textAlign: TextAlign.center,
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
+            title: const Text('Delete Department'),
+            content: const Text(
+              'Are you sure you want to delete this department?',
+              style: TextStyle(fontSize: 18),
+              textAlign: TextAlign.center,
             ),
-
-            ElevatedButton(
-              onPressed: () async {
-                bool success = await deleteDepartment(departmentId, context);
-                if (success) {
-                  setState(() {
-                    futureDepartments = fetchDepartments(); // تحديث قائمة الأقسام بعد الحذف
-                  });
-                  Navigator.of(context).pop(); // إغلاق الحوار بعد الحذف
-                }
-              },
-              child: const Text('Delete'),
-            ),
-        ]
-
-        );
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  bool success = await deleteDepartment(departmentId, context);
+                  if (success) {
+                    setState(() {
+                      futureDepartments =
+                          fetchDepartments(); // تحديث قائمة الأقسام بعد الحذف
+                    });
+                    Navigator.of(context).pop(); // إغلاق الحوار بعد الحذف
+                  }
+                },
+                child: const Text('Delete'),
+              ),
+            ]);
       },
     );
   }
@@ -120,6 +120,7 @@ class _ShowDepartmentsState extends State<DepartmentsPage> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Departments Page'),
+        backgroundColor: Colors.blueAccent,
       ),
       drawer: NavDrawer(),
       body: RefreshIndicator(
@@ -136,125 +137,167 @@ class _ShowDepartmentsState extends State<DepartmentsPage> {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return Center(
-                child: Text(
-                  "Failed to load departments. Please try again later.",
-                  style: TextStyle(fontSize: 18, color: Colors.red),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error, size: 60, color: Colors.red),
+                    const SizedBox(height: 10),
+                    Text(
+                      "Failed to load sections, please try again later.",
+                      style: TextStyle(fontSize: 18, color: Colors.red),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               );
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text("No departments available"));
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.info_outline, size: 60, color: Colors.blue),
+                    SizedBox(height: 10),
+                    Text("There are no sections available.", style: TextStyle(fontSize: 18)),
+                  ],
+                ),
+              );
             } else {
               List<ShowDepartments> departments = snapshot.data!;
-              return GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10.0,
-                  mainAxisSpacing: 10.0,
-                ),
-                itemCount: departments.length,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        PageRouteBuilder(
-                          pageBuilder: (context, animation, secondaryAnimation) =>  DevicesPage(departmentId: departments[index].id!),
-                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                            const begin = Offset(0.0, 1.0);
-                            const end = Offset.zero; // ينتهي في المكان الحالي
-                            const curve = Curves.easeInOut;
+              return Column(
+                children: [
+                  Expanded(
+                    child: GridView.builder(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 10.0,
+                        mainAxisSpacing: 10.0,
+                      ),
+                      itemCount: departments.length,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder: (context, animation,
+                                    secondaryAnimation) =>
+                                    DevicesPage(departmentId: departments[index].id!),
+                                transitionsBuilder:
+                                    (context, animation, secondaryAnimation, child) {
+                                  const begin = Offset(0.0, 1.0);
+                                  const end = Offset.zero; // ينتهي في المكان الحالي
+                                  const curve = Curves.easeInOut;
 
-                            var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                            var offsetAnimation = animation.drive(tween);
+                                  var tween = Tween(begin: begin, end: end)
+                                      .chain(CurveTween(curve: curve));
+                                  var offsetAnimation = animation.drive(tween);
 
-                            return SlideTransition(
-                              position: offsetAnimation,
-                              child: child,
+                                  return SlideTransition(
+                                    position: offsetAnimation,
+                                    child: child,
+                                  );
+                                },
+                              ),
                             );
                           },
-                        ),
-                      );
-                    },
-
-                    child: Card(
-                      elevation: 5,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              departments[index].name ?? 'No Name',
-                              style: const TextStyle(fontSize: 18),
+                          child: Card(
+                            color: Color(0xffd1d8e0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40.0),
                             ),
-                            const SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => EditDepartment(
-                                            departmentid:
-                                            departments[index].id!),
+                            elevation: 5,
+                            shadowColor: Colors.blue.withOpacity(0.8),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    departments[index].name ?? 'No Name',
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => EditDepartment(
+                                                  departmentid:
+                                                  departments[index].id!),
+                                            ),
+                                          ).then((value) {
+                                            if (value == true) {
+                                              setState(() {
+                                                futureDepartments =
+                                                    fetchDepartments();
+                                              });
+                                            }
+                                          });
+                                        },
+                                        child: const Text('Edit'),
                                       ),
-                                    ).then((value) {
-                                      if (value == true) {
-                                        setState(() {
-                                          futureDepartments =
-                                              fetchDepartments();
-                                        });
-                                      }
-                                    });
-                                  },
-                                  child: const Text('Edit'),
-                                ),
-                               if(role=='1')...[
-                                ElevatedButton(
-                                  onPressed: () {
-                                    showDeleteDialog(
-                                        context, departments[index].id!);
-                                  },
-                                  child: const Text('Delete'),
-                                ),
+                                      if (role == '1') ...[
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            showDeleteDialog(
+                                                context, departments[index].id!);
+                                          },
+                                          child: const Text('Delete'),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
                                 ],
-                              ],
+                              ),
                             ),
-                          ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Center(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        // Action for adding a department
+                      },
+                      icon: const Icon(Icons.add),
+                      label: const Text("add department"),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
                         ),
                       ),
                     ),
-                  );
-                },
+                  ),
+                ],
               );
             }
           },
         ),
       ),
-      floatingActionButton: FanFloatingMenu(
-        menuItems: [
-          FanMenuItem(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      CreateDepartment(floorId: widget.floorId),
-                ),
-              ).then((value) {
-                if (value == true) {
-                  setState(() {
-                    futureDepartments = fetchDepartments();
-                  });
-                }
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CreateDepartment(floorId: widget.floorId),
+            ),
+          ).then((value) {
+            if (value == true) {
+              setState(() {
+                futureDepartments = fetchDepartments();
               });
-            },
-            icon: Icons.add,
-            title: 'Add department',
-          ),
-        ],
+            }
+          });
+        },
+        child: const Icon(Icons.add),
+        backgroundColor: Colors.blueAccent,
       ),
     );
   }

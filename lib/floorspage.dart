@@ -48,10 +48,9 @@ class _FloorsPageState extends State<FloorsPage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'Floors Page',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.teal, // Custom primary color
+          'Floors Page'),
+
+        backgroundColor: Colors.blueAccent,
       ),
       drawer: NavDrawer(),
       body: Padding(
@@ -115,22 +114,22 @@ class _FloorsPageState extends State<FloorsPage> {
         );
       },
 
-      child: Card(
+      child: Card(color:Color(0xffd1d8e0),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
+          borderRadius: BorderRadius.circular(40.0),
         ),
-        elevation: 4,
-        shadowColor: Colors.tealAccent.withOpacity(0.4),
+        elevation: 5,
+        shadowColor: Colors.blue.withOpacity(0.8),
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(8.0),
             child: Text(
               floor.name ?? 'No Name',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.teal, // Custom color for text
+                fontSize: 18 ,
+                //fontWeight: FontWeight.w100,
+                color: Colors.blueAccent, // Custom color for text
               ),
             ),
           ),

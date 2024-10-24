@@ -24,17 +24,19 @@ class _EdithardwarekeyState extends State<Edithardwarekey> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Hardware Key'),
-        backgroundColor: Colors.teal, // نفس اللون المستخدم في شريط العنوان
+        backgroundColor: Colors.blueAccent,
       ),
       drawer: NavDrawer(),
       body: Stack(
         children: [
-          // الخلفية
+
           Container(
             decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('lib/images/edithardwarekey.png'), // مسار صورة الخلفية
-                fit: BoxFit.cover, // جعل الصورة تغطي كامل الخلفية
+              border: Border(
+                top: BorderSide(width: 5.0, color: Colors.blue), // إطار علوي
+                bottom: BorderSide(width: 5.0, color: Colors.blue), // إطار سفلي
+                left: BorderSide(width: 5.0, color: Colors.blue), // إطار يساري
+                right: BorderSide(width: 5.0, color: Colors.blue), // إطار يميني
               ),
             ),
           ),
@@ -119,8 +121,8 @@ class _EdithardwarekeyState extends State<Edithardwarekey> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                          backgroundColor: Colors.white10,
+                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),

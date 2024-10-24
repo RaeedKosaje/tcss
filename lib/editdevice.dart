@@ -19,17 +19,20 @@ class EditDevice extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Device '),
+        backgroundColor: Colors.blueAccent,
       ),
       drawer: NavDrawer(),
       body:Stack(
           children: [
-      // الخلفية
+
       Container(
       decoration: const BoxDecoration(
-      image: DecorationImage(
-          image: AssetImage('lib/images/editdevice.png'), // مسار صورة الخلفية
-      fit: BoxFit.cover, // جعل الصورة تغطي كامل الخلفية
-    ),
+        border: Border(
+          top: BorderSide(width: 5.0, color: Colors.blue), // إطار علوي
+          bottom: BorderSide(width: 5.0, color: Colors.blue), // إطار سفلي
+          left: BorderSide(width: 5.0, color: Colors.blue), // إطار يساري
+          right: BorderSide(width: 5.0, color: Colors.blue), // إطار يميني
+        ),
     ),
     ),
       Padding(
@@ -37,22 +40,24 @@ class EditDevice extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(labelText: 'New Device Name'),
+            Image.asset(
+              'lib/images/editdevice.png', // تأكد من وضع مسار الصورة الصحيح
+              height: 300, // ارتفاع الشعار
             ),
-            TextField(
-              controller: typeController,
-              decoration: const InputDecoration(labelText: 'New Device type '),
-            ),
-            TextField(
-              controller: descriptionController,
-              decoration: const InputDecoration(labelText: 'New Device description note'),
-            ),
-            TextField(
-              controller: noteController,
-              decoration: const InputDecoration(labelText: 'New Device note'),
-            ),
+
+            const SizedBox(height: 20),
+            // حقول الإدخال
+            _buildTextField(nameController, 'name'),
+            const SizedBox(height: 20),
+            // حقول الإدخال
+            _buildTextField(typeController, 'type'),
+            const SizedBox(height: 20),
+            // حقول الإدخال
+            _buildTextField(descriptionController, 'description'),
+            const SizedBox(height: 20),
+            // حقول الإدخال
+            _buildTextField(noteController, 'note'),
+
             ElevatedButton(
               onPressed: () async {
                 bool success = await editdevice(
@@ -67,12 +72,32 @@ class EditDevice extends StatelessWidget {
                   Navigator.pop(context, true); // الرجوع مع القيمة true
                 }
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white10,
+                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                elevation: 5,
+              ),
               child: const Text('Edit Device'),
             ),
           ],
         ),
       ),
     ]));
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(),
+        filled: true,
+        fillColor: Colors.white70, // لون خلفية الحقل
+      ),
+    );
   }
 
   Future<bool> editdevice({

@@ -26,17 +26,18 @@ class EditPeripherals extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Peripherals'),
-        backgroundColor: Colors.teal, // تخصيص لون شريط العنوان
-      ),
+        backgroundColor: Colors.blueAccent,      ),
       drawer: NavDrawer(),
       body: Stack(
         children: [
-          // الخلفية
+
           Container(
             decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('lib/images/editperipherals.png'), // مسار صورة الخلفية
-                fit: BoxFit.cover, // جعل الصورة تغطي كامل الخلفية
+              border: Border(
+                top: BorderSide(width: 5.0, color: Colors.blue), // إطار علوي
+                bottom: BorderSide(width: 5.0, color: Colors.blue), // إطار سفلي
+                left: BorderSide(width: 5.0, color: Colors.blue), // إطار يساري
+                right: BorderSide(width: 5.0, color: Colors.blue), // إطار يميني
               ),
             ),
           ),
@@ -54,6 +55,10 @@ class EditPeripherals extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min, // تعديل حجم العمود
                     children: <Widget>[
+                      Image.asset(
+                        'lib/images/editperipherals.png', // تأكد من وضع مسار الصورة الصحيح
+                        height: 300, // ارتفاع الشعار
+                      ),
                       Text(
                         'Edit Peripheral Devices',
                         style: TextStyle(
@@ -94,12 +99,12 @@ class EditPeripherals extends StatelessWidget {
                           if (success) {
                             Navigator.pop(context, true); // الرجوع مع القيمة true
                             Navigator.pop(context); // الرجوع مع القيمة true
-                            Navigator.pop(context); // الرجوع مع القيمة true
+
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                          backgroundColor: Colors.white10,
+                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),

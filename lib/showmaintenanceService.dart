@@ -71,7 +71,8 @@ class _ShowMaintenanceServiceState extends State<ShowMaintenanceService> {
                     maintenanceservice.id!, context);
                 if (success) {
                   setState(() {
-                    futureMaintenance = fetchMaintenance(); // تحديث البيانات بعد الحذف
+                    futureMaintenance =
+                        fetchMaintenance(); // تحديث البيانات بعد الحذف
                   });
                   Navigator.of(context).pop(); // إغلاق الحوار
                 }
@@ -119,7 +120,7 @@ class _ShowMaintenanceServiceState extends State<ShowMaintenanceService> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Show Maintenance Service'),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.blueAccent,
         actions: [
           IconButton(
             icon: Icon(Icons.home),
@@ -135,13 +136,16 @@ class _ShowMaintenanceServiceState extends State<ShowMaintenanceService> {
               Navigator.pushAndRemoveUntil(
                 context,
                 PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) => FloorsPage(),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      FloorsPage(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
                     const begin = Offset(1.0, 0.0); // يبدأ من اليمين
                     const end = Offset.zero; // ينتهي في المكان الحالي
                     const curve = Curves.easeInOut;
 
-                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                    var tween = Tween(begin: begin, end: end)
+                        .chain(CurveTween(curve: curve));
                     var offsetAnimation = animation.drive(tween);
 
                     return SlideTransition(
@@ -150,13 +154,12 @@ class _ShowMaintenanceServiceState extends State<ShowMaintenanceService> {
                     );
                   },
                 ),
-                    (route) => false,
+                (route) => false,
               );
             },
           ),
-
-
-        ], ),
+        ],
+      ),
       drawer: NavDrawer(),
       body: FutureBuilder<List<showMaintenanceServicemodel>>(
         future: futureMaintenance,
@@ -167,7 +170,7 @@ class _ShowMaintenanceServiceState extends State<ShowMaintenanceService> {
             return Center(child: Text("Error: ${snapshot.error}"));
           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             List<showMaintenanceServicemodel> maintenanceServices =
-            snapshot.data!;
+                snapshot.data!;
             return ListView.builder(
               itemCount: maintenanceServices.length,
               itemBuilder: (context, index) {
@@ -185,16 +188,27 @@ class _ShowMaintenanceServiceState extends State<ShowMaintenanceService> {
   Widget _buildMaintenanceItem(showMaintenanceServicemodel service) {
     return ExpansionTile(
       title: Text(
-        '${service.department?.name ?? 'No code'}',
+        '${service.department ?? 'No code'}',
         style: TextStyle(
-            fontSize: 18, fontWeight: FontWeight.bold, color: Colors.teal),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Color(0xff6a89cc)),
       ),
       children: [
         ListTile(
-          title: Text('Device: ${service.device?.name ?? 'No code'}'),
+          title: Text('date: ${service.date ?? 'No date'}'),
         ),
         ListTile(
-          title: Text('User: ${service.user?.name ?? 'No code'}'),
+          title: Text('hour: ${service.hour ?? 'No hour'}'),
+        ),
+        ListTile(
+          title: Text('device: ${service.device ?? 'No code'}'),
+        ),
+        ListTile(
+          title: Text('User: ${service.user ?? 'No code'}'),
+        ),
+        ListTile(
+          title: Text('description: ${service.description ?? 'No hour'}'),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -203,7 +217,12 @@ class _ShowMaintenanceServiceState extends State<ShowMaintenanceService> {
               _showDeleteDialog(context, service);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.redAccent, // لون الزر
+              backgroundColor: Colors.white10,
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 40, vertical: 15),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ), // لون الزر
             ),
             child: Text('Delete'),
           ),

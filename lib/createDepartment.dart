@@ -17,17 +17,18 @@ class CreateDepartment extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Department'),
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.blueAccent,
       ),
       drawer: NavDrawer(),
       body: Stack(
         children: [
-          // خلفية الصفحة
-          Container(
+           Container(
             decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('lib/images/CreateDepartment.png'), // خلفية تناسب الموضوع
-                fit: BoxFit.cover,
+              border: Border(
+                top: BorderSide(width: 5.0, color: Colors.blue), // إطار علوي
+                bottom: BorderSide(width: 5.0, color: Colors.blue), // إطار سفلي
+                left: BorderSide(width: 5.0, color: Colors.blue), // إطار يساري
+                right: BorderSide(width: 5.0, color: Colors.blue), // إطار يميني
               ),
             ),
           ),
@@ -42,7 +43,11 @@ class CreateDepartment extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
+                   children: <Widget>[
+                     Image.asset(
+                       'lib/images/CreateDepartment.png', // تأكد من وضع مسار الصورة الصحيح
+                       height: 300, // ارتفاع الشعار
+                     ),
                     TextField(
                       controller: nameController,
                       decoration: const InputDecoration(
@@ -64,7 +69,7 @@ class CreateDepartment extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton.icon(
-                      icon: const Icon(Icons.add),
+                      icon: const Icon(Icons.add_business_outlined),
                       label: const Text('Create Department'),
                       onPressed: () async {
                         bool success = await createDepartment(
@@ -78,8 +83,8 @@ class CreateDepartment extends StatelessWidget {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                        backgroundColor: Colors.white10,
+                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),

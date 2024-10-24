@@ -172,7 +172,7 @@ class _ShowMaterialState extends State<ShowMaterials> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Show Material'),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.blueAccent,
         actions: [
           IconButton(
             icon: Icon(Icons.home),
@@ -188,13 +188,16 @@ class _ShowMaterialState extends State<ShowMaterials> {
               Navigator.pushAndRemoveUntil(
                 context,
                 PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) => FloorsPage(),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      FloorsPage(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
                     const begin = Offset(1.0, 0.0); // يبدأ من اليمين
                     const end = Offset.zero; // ينتهي في المكان الحالي
                     const curve = Curves.easeInOut;
 
-                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                    var tween = Tween(begin: begin, end: end)
+                        .chain(CurveTween(curve: curve));
                     var offsetAnimation = animation.drive(tween);
 
                     return SlideTransition(
@@ -203,13 +206,12 @@ class _ShowMaterialState extends State<ShowMaterials> {
                     );
                   },
                 ),
-                    (route) => false,
+                (route) => false,
               );
             },
           ),
-
-
-        ],),
+        ],
+      ),
       drawer: NavDrawer(),
       body: FutureBuilder<List<Showmaterial>>(
         future: futureMaterial,
@@ -219,28 +221,27 @@ class _ShowMaterialState extends State<ShowMaterials> {
             return ListView.builder(
               itemCount: material?.length ?? 0,
               itemBuilder: (context, index) {
-                // إنشاء مفتاح لكل بطاقة مستخدم
                 final GlobalKey buttonKey = GlobalKey();
 
                 return Card(
-                  elevation: 12,
-                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  elevation: 8,
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: ExpansionTile(
                       title: Row(
                         children: [
-                          Icon(Icons.notes, color: Colors.teal),
-                          SizedBox(width: 8),
+                          Icon(Icons.notes, color: Color(0xff6a89cc)),
+                          SizedBox(width: 10),
                           Text(
                             material![index].name ?? 'No Name',
                             style: TextStyle(
-                              fontSize: 22,
+                              fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: Colors.teal,
+                              color: Color(0xff1e3799),
                             ),
                           ),
                         ],
@@ -248,37 +249,26 @@ class _ShowMaterialState extends State<ShowMaterials> {
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Row(
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: Text(
-                                  'Quantity: ${material![index].quantity?.toString() ?? 'No Quantity'}',
-                                  style: const TextStyle(fontSize: 18, color: Colors.brown),
-                                  overflow: TextOverflow.clip, // يقطع النص إذا كان طويلاً
-                                ),
+                              Text(
+                                'Quantity: ${material![index].quantity?.toString() ?? 'No Quantity'}',
+                                style: TextStyle(fontSize: 18, color: Color(0xff34495e)),
                               ),
-                              SizedBox(width: 4),
-                              Expanded(
-                                child: Text(
-                                  'Price: ${material![index].price?.toString() ?? 'No Price'}',
-                                  style: TextStyle(fontSize: 18, color: Colors.blue),
-                                  overflow: TextOverflow.clip, // يقطع النص إذا كان طويلاً
-                                ),
-                              ),SizedBox(width: 4),
-                              Expanded(
-                                child: Text(
-                                  'code: ${material![index].code?.toString() ?? 'No code'}',
-                                  style: TextStyle(fontSize: 18, color: Colors.green),
-                                  overflow: TextOverflow.clip, // يقطع النص إذا كان طويلاً
-                                ),
+                              Text(
+                                'Price: \$${material![index].price?.toString() ?? 'No Price'}',
+                                style: TextStyle(fontSize: 18, color: Color(0xff34495e)),
                               ),
-                              SizedBox(width: 4),
+                              Text(
+                                'Code: ${material![index].code?.toString() ?? 'No Code'}',
+                                style: TextStyle(fontSize: 18, color: Color(0xff34495e)),
+                              ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   IconButton(
-                                    icon: Icon(Icons.edit, color: Colors.teal),
+                                    icon: Icon(Icons.edit, color: Color(0xff6a89cc)),
                                     onPressed: () {
                                       Navigator.push(
                                         context,
@@ -295,7 +285,7 @@ class _ShowMaterialState extends State<ShowMaterials> {
                                     },
                                   ),
                                   IconButton(
-                                    icon: Icon(Icons.delete, color: Colors.red),
+                                    icon: Icon(Icons.delete, color: Color(0xfff8c291)),
                                     onPressed: () {
                                       _showDeleteDialog(context, material[index]);
                                     },
@@ -305,7 +295,6 @@ class _ShowMaterialState extends State<ShowMaterials> {
                             ],
                           ),
                         ),
-
                       ],
                     ),
                   ),
@@ -318,27 +307,24 @@ class _ShowMaterialState extends State<ShowMaterials> {
           return Center(child: CircularProgressIndicator());
         },
       ),
-      floatingActionButton: FanFloatingMenu(
-        menuItems: [
-          FanMenuItem(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CreateMaterial()),
-              ).then((value) {
-                if (value) {
-                  setState(() {
-                    futureMaterial = fetchMaterial();
-                  });
-                } else {
-                  print('error');
-                }
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CreateMaterial()),
+          ).then((value) {
+            if (value) {
+              setState(() {
+                futureMaterial = fetchMaterial();
               });
-            },
-            icon: Icons.add,
-            title: 'Add Material',
-          ),
-        ],
+            } else {
+              print('error');
+            }
+          });
+        },
+        child: const Icon(Icons.add),
+        backgroundColor: Colors.blueAccent,
       ),
     );
   }

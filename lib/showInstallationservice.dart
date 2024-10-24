@@ -50,7 +50,7 @@ class _ShowInstallationServiceState extends State<ShowInstallationService> {
         return AlertDialog(
           title: Text('Delete Installation service'),
           content: Text(
-            'Are you sure you want to delete "${installationService.device?.name}"?',
+            'Are you sure you want to delete "${installationService.device}"?',
             style: TextStyle(fontSize: 18),
             textAlign: TextAlign.center,
           ),
@@ -111,8 +111,7 @@ class _ShowInstallationServiceState extends State<ShowInstallationService> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Show Installation Service'),
-        backgroundColor: Colors.teal,
-        actions: [
+        backgroundColor: Colors.blueAccent,        actions: [
           IconButton(
             icon: Icon(Icons.home),
             tooltip: 'Go to Home',
@@ -173,37 +172,29 @@ class _ShowInstallationServiceState extends State<ShowInstallationService> {
   Widget _buildInstallationItem(ShowInstallationServiceModel installationService) {
     return ExpansionTile(
       title: Text(
-        '${installationService.department?.name ?? 'No department'}',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.teal),
+        '${installationService.department ?? 'No department'}',
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,  color: Color(0xff6a89cc),),
       ),
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: ListTile(
-                title: Text('Device: ${installationService.device?.name ?? 'No Device'}'),
-              ),
-            ),
-            Expanded(
-              child: ListTile(
-                title: Text('User: ${installationService.user?.name ?? 'No User'}'),
-              ),
-            ),
-          ],
-        ),
-        // عرض المواد مع الكمية
         Column(
           children: [
             // عرض تاريخ خدمة الصيانة
             ListTile(
-              title: Text('Service Date: ${installationService.createdAt ?? 'No Date Available'}'),
+              title: Text('Date: ${installationService.date ?? 'No Date Available'}'),
             ),
-
-            // عرض المواد مع الكمية
+            ListTile(
+              title: Text('hour: ${installationService.hour ?? 'No Date Available'}'),
+            ),
+            ListTile(
+              title: Text('Device: ${installationService.device ?? 'No Device'}'),
+            ),
+            ListTile(
+              title: Text('User: ${installationService.user ?? 'No User'}'),
+            ),
             ...installationService.materials?.map((material) {
               return ListTile(
                 title: Text('Material: ${material.name}'),
-                subtitle: Text('Quantity: ${material.pivot?.quantity ?? 'No quantity'}'),
+                subtitle: Text('Quantity: ${material.quantity ?? 'No quantity'}'),
               );
             }).toList() ?? [],
           ],
@@ -216,7 +207,12 @@ class _ShowInstallationServiceState extends State<ShowInstallationService> {
               _showDeleteDialog(context, installationService);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.redAccent, // لون زر الحذف
+              backgroundColor: Colors.white10,
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 40, vertical: 15),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
             ),
             child: Text('Delete'),
           ),

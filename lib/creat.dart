@@ -14,7 +14,7 @@ class CreateUser extends StatelessWidget {
     TextEditingController();
 
     return Scaffold(
-        appBar: AppBar(
+        appBar: AppBar( centerTitle: true,
           title: const Text('Create User'),
           backgroundColor: Colors.blueAccent,
         ),
@@ -85,7 +85,7 @@ class CreateUser extends StatelessWidget {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
+                        backgroundColor: Colors.white10,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 40, vertical: 15),
                         shape: RoundedRectangleBorder(

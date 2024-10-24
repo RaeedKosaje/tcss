@@ -11,14 +11,14 @@ class EditUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController nameController = TextEditingController(text: 'majd');
+    final TextEditingController nameController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
     GlobalKey<FormState> editUserForm = GlobalKey();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit User'),
-        backgroundColor: Colors.teal.withOpacity(0.7), // شفافية خلفية الـ AppBar
+        backgroundColor: Colors.blueAccent, // شفافية خلفية الـ AppBar
           actions: [
             IconButton(
               icon: Icon(Icons.home),
@@ -62,9 +62,11 @@ class EditUser extends StatelessWidget {
           // الخلفية
           Container(
             decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('lib/images/edituser.png'), // مسار صورة الخلفية
-                fit: BoxFit.scaleDown, // جعل الصورة تغطي كامل الخلفية
+              border: Border(
+                top: BorderSide(width: 5.0, color: Colors.blue), // إطار علوي
+                bottom: BorderSide(width: 5.0, color: Colors.blue), // إطار سفلي
+                left: BorderSide(width: 5.0, color: Colors.blue), // إطار يساري
+                right: BorderSide(width: 5.0, color: Colors.blue), // إطار يميني
               ),
             ),
           ),
@@ -85,6 +87,10 @@ class EditUser extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
+                        Image.asset(
+                          'lib/images/edituser.png', // مسار الشعار
+                          height: 100, // ارتفاع الشعار
+                        ),
                         Text(
                           'Edit User Information',
                           style: TextStyle(
@@ -144,9 +150,8 @@ class EditUser extends StatelessWidget {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.teal.withOpacity(0.8), // شفافية زر التعديل
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 15),
+                            backgroundColor: Colors.white10,
+                            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),

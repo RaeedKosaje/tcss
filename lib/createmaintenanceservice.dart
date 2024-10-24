@@ -24,10 +24,13 @@ class CreateMaintenanceService extends StatelessWidget {
           // إضافة خلفية
           Container(
             decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('lib/images/createMaintenanceService.png'), // مسار صورة الخلفية
-                fit: BoxFit.cover,
+              border: Border(
+                top: BorderSide(width: 5.0, color: Colors.blue), // إطار علوي
+                bottom: BorderSide(width: 5.0, color: Colors.blue), // إطار سفلي
+                left: BorderSide(width: 5.0, color: Colors.blue), // إطار يساري
+                right: BorderSide(width: 5.0, color: Colors.blue), // إطار يميني
               ),
+
             ),
           ),
           Padding(
@@ -43,6 +46,10 @@ class CreateMaintenanceService extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
+                      Image.asset(
+                        'lib/images/createMaintenanceService.png', // تأكد من وضع مسار الصورة الصحيح
+                        height: 300, // ارتفاع الشعار
+                      ),
                       Text(
                         'Create Maintenance Service',
                         style: TextStyle(
@@ -66,8 +73,9 @@ class CreateMaintenanceService extends StatelessWidget {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
-                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                          backgroundColor: Colors.white10,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 40, vertical: 15),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),

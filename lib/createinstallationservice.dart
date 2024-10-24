@@ -63,9 +63,11 @@ class _CreateInstallationServiceState extends State<CreateInstallationService> {
           // خلفية الصفحة
           Container(
             decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('lib/images/createinstallationservice.png'), // صورة الخلفية
-                fit: BoxFit.cover,
+              border: Border(
+                top: BorderSide(width: 5.0, color: Colors.blue), // إطار علوي
+                bottom: BorderSide(width: 5.0, color: Colors.blue), // إطار سفلي
+                left: BorderSide(width: 5.0, color: Colors.blue), // إطار يساري
+                right: BorderSide(width: 5.0, color: Colors.blue), // إطار يميني
               ),
             ),
           ),
@@ -81,6 +83,10 @@ class _CreateInstallationServiceState extends State<CreateInstallationService> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    Image.asset(
+                      'lib/images/createinstallationservice.png', // تأكد من وضع مسار الصورة الصحيح
+                      height: 300, // ارتفاع الشعار
+                    ),
                     TextFormField(
                       controller: descriptionController,
                       decoration: const InputDecoration(
@@ -145,11 +151,13 @@ class _CreateInstallationServiceState extends State<CreateInstallationService> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
-                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                        backgroundColor: Colors.white10,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
+                        elevation: 5,
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -200,8 +208,9 @@ class _CreateInstallationServiceState extends State<CreateInstallationService> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                        backgroundColor: Colors.white10,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),

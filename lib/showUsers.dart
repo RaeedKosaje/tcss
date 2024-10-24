@@ -124,7 +124,7 @@ class _ShowUserState extends State<Showusers> {
           value: 0,
           child: Row(
             children: [
-              Icon(Icons.edit, color: Colors.teal),
+              Icon(Icons.edit, color: Color(0xff6a89cc)),
               SizedBox(width: 8),
               Text('Edit'),
             ],
@@ -134,7 +134,7 @@ class _ShowUserState extends State<Showusers> {
           value: 1,
           child: Row(
             children: [
-              Icon(Icons.delete, color: Colors.red),
+              Icon(Icons.delete, color: Color(0xfff8c291)),
               SizedBox(width: 8),
               Text('Delete'),
             ],
@@ -158,7 +158,8 @@ class _ShowUserState extends State<Showusers> {
             }
           });
         } else if (value == 1) {
-          _showDeleteDialog(context, user); // عرض حوار الحذف بدلاً من صفحة الحذف
+          _showDeleteDialog(
+              context, user); // عرض حوار الحذف بدلاً من صفحة الحذف
         }
       }
     });
@@ -169,7 +170,7 @@ class _ShowUserState extends State<Showusers> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Show Users'),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.blueAccent,
         actions: [
           IconButton(
             icon: Icon(Icons.home),
@@ -185,13 +186,16 @@ class _ShowUserState extends State<Showusers> {
               Navigator.pushAndRemoveUntil(
                 context,
                 PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) => FloorsPage(),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      FloorsPage(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
                     const begin = Offset(1.0, 0.0); // يبدأ من اليمين
                     const end = Offset.zero; // ينتهي في المكان الحالي
                     const curve = Curves.easeInOut;
 
-                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                    var tween = Tween(begin: begin, end: end)
+                        .chain(CurveTween(curve: curve));
                     var offsetAnimation = animation.drive(tween);
 
                     return SlideTransition(
@@ -200,15 +204,12 @@ class _ShowUserState extends State<Showusers> {
                     );
                   },
                 ),
-                    (route) => false,
+                (route) => false,
               );
             },
           ),
-
-
         ],
       ),
-
       drawer: NavDrawer(),
       body: FutureBuilder<List<ShowUsers>>(
         future: futureUser,
@@ -218,7 +219,6 @@ class _ShowUserState extends State<Showusers> {
             return ListView.builder(
               itemCount: users?.length ?? 0,
               itemBuilder: (context, index) {
-                // إنشاء مفتاح لكل بطاقة مستخدم
                 final GlobalKey buttonKey = GlobalKey();
 
                 return Card(
@@ -236,18 +236,25 @@ class _ShowUserState extends State<Showusers> {
                           child: Text(
                             users![index].name ?? 'No Name',
                             style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.teal),
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xff6a89cc),
+                            ),
                           ),
                         ),
                         IconButton(
                           key: buttonKey, // تعيين المفتاح إلى الزر
-                          icon: Icon(Icons.more_vert, color: Colors.teal),
+                          icon: Icon(Icons.more_vert, color: Color(0xff6a89cc)),
                           onPressed: () {
-                            RenderBox renderBox = buttonKey.currentContext!.findRenderObject() as RenderBox;
-                            Offset offset = renderBox.localToGlobal(Offset.zero);
-                            _showPopupMenu(context, users[index], Offset(offset.dx, offset.dy + 30)); // تعديل إزاحة Y
+                            RenderBox renderBox = buttonKey.currentContext!
+                                .findRenderObject() as RenderBox;
+                            Offset offset =
+                                renderBox.localToGlobal(Offset.zero);
+                            _showPopupMenu(
+                                context,
+                                users[index],
+                                Offset(offset.dx,
+                                    offset.dy + 30)); // تعديل إزاحة Y
                           },
                         ),
                       ],
@@ -262,29 +269,23 @@ class _ShowUserState extends State<Showusers> {
           return Center(child: CircularProgressIndicator());
         },
       ),
-      floatingActionButton: FanFloatingMenu(
-        toggleButtonIconColor: Colors.green.shade300,
-
-        menuItems: [
-          FanMenuItem(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CreateUser()),
-              ).then((value) {
-                if (value) {
-                  setState(() {
-                    futureUser = fetchUser();
-                  });
-                } else {
-                  print('error');
-                }
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CreateUser()),
+          ).then((value) {
+            if (value) {
+              setState(() {
+                futureUser = fetchUser();
               });
-            },
-            icon: Icons.add,
-            title: 'Add user',
-          ),
-        ],
+            } else {
+              print('error');
+            }
+          });
+        },
+        child: const Icon(Icons.add),
+        backgroundColor: Colors.blueAccent,
       ),
     );
   }

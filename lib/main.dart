@@ -98,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.blueAccent, // تخصيص لون شريط العنوان
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -175,11 +175,11 @@ class _LoginPageState extends State<LoginPage> {
                 : ElevatedButton(
               onPressed: _login,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+                backgroundColor: Colors.white10,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 40, vertical: 15),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(30),
                 ),
               ),
               child: const Text(

@@ -19,7 +19,7 @@ class EditMaterial extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Material'),
-        backgroundColor: Colors.teal, // تخصيص لون شريط العنوان
+        backgroundColor: Colors.blueAccent,
       ),
       drawer: NavDrawer(),
       body: Stack(
@@ -27,9 +27,11 @@ class EditMaterial extends StatelessWidget {
           // الخلفية
           Container(
             decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('lib/images/editmaterial.png'), // مسار صورة الخلفية
-                fit: BoxFit.cover, // جعل الصورة تغطي كامل الخلفية
+              border: Border(
+                top: BorderSide(width: 5.0, color: Colors.blue), // إطار علوي
+                bottom: BorderSide(width: 5.0, color: Colors.blue), // إطار سفلي
+                left: BorderSide(width: 5.0, color: Colors.blue), // إطار يساري
+                right: BorderSide(width: 5.0, color: Colors.blue), // إطار يميني
               ),
             ),
           ),
@@ -49,6 +51,10 @@ class EditMaterial extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min, // تعديل حجم العمود
                       children: <Widget>[
+                        Image.asset(
+                          'lib/images/editmaterial.png', // مسار الشعار
+                          height: 100, // ارتفاع الشعار
+                        ),
                         Text(
                           'Edit Material',
                           style: TextStyle(
@@ -57,6 +63,8 @@ class EditMaterial extends StatelessWidget {
                             color: Colors.teal,
                           ),
                         ),
+
+
                         const SizedBox(height: 20),
                         _buildTextField(nameController, 'New Material Name', (value) {
                           if (value!.length < 2) {
@@ -71,6 +79,7 @@ class EditMaterial extends StatelessWidget {
                           }
                           return null;
                         }, obscureText: true),
+
                         const SizedBox(height: 20),
                         _buildTextField(quantityController, 'New Material Quantity', null),
                         const SizedBox(height: 20),
@@ -102,8 +111,8 @@ class EditMaterial extends StatelessWidget {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.teal,
-                            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                            backgroundColor: Colors.white10,
+                            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),

@@ -27,9 +27,11 @@ class Createdevice extends StatelessWidget {
           // خلفية الصفحة
           Container(
             decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('lib/images/Createdevice.png'), // إضافة خلفية مناسبة
-                fit: BoxFit.cover,
+              border: Border(
+                top: BorderSide(width: 5.0, color: Colors.blue), // إطار علوي
+                bottom: BorderSide(width: 5.0, color: Colors.blue), // إطار سفلي
+                left: BorderSide(width: 5.0, color: Colors.blue), // إطار يساري
+                right: BorderSide(width: 5.0, color: Colors.blue), // إطار يميني
               ),
             ),
           ),
@@ -45,6 +47,10 @@ class Createdevice extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    Image.asset(
+                      'lib/images/Createdevice.png', // تأكد من وضع مسار الصورة الصحيح
+                      height: 300, // ارتفاع الشعار
+                    ),
                     TextField(
                       controller: nameController,
                       decoration: const InputDecoration(
@@ -101,8 +107,8 @@ class Createdevice extends StatelessWidget {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
-                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                        backgroundColor: Colors.white10,
+                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),

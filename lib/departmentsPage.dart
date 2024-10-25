@@ -259,21 +259,7 @@ class _ShowDepartmentsState extends State<DepartmentsPage> {
                       },
                     ),
                   ),
-                  Center(
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        // Action for adding a department
-                      },
-                      icon: const Icon(Icons.add),
-                      label: const Text("add department"),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                    ),
-                  ),
+
                 ],
               );
             }

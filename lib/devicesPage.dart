@@ -119,7 +119,7 @@ class _ShowDevicesState extends State<DevicesPage> {
       });
     } else {
       setState(() {
-        hardwarekey = null; // تحديد أن البيانات غير متوفرة
+        hardwarekey = null;
       });
     }
   }
@@ -369,7 +369,7 @@ class _ShowDevicesState extends State<DevicesPage> {
               _buildPeripheralRow(Icons.description, 'description',
                   hardwarekey?.description ?? "رينغير موجود"),
 
-              const SizedBox(height: 10), // مسافة بين المواصفات والأزرار
+              const SizedBox(height: 10),
 
               ElevatedButton(
                 onPressed: () {
@@ -455,7 +455,36 @@ class _ShowDevicesState extends State<DevicesPage> {
       body: FutureBuilder(
         future: fetchDevices(),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error, size: 60, color: Colors.red),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Failed to load devices, please try again later.",
+                    style: TextStyle(fontSize: 18, color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            );
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(Icons.info_outline, size: 60, color: Colors.blue),
+                  SizedBox(height: 10),
+                  Text("No devices available", style: TextStyle(fontSize: 18)),
+                ],
+              ),
+            );
+          } else {
+            List<ShowDevices> futureDevices = snapshot.data!;
             return ListView.builder(
               itemCount: futureDevices.length,
               itemBuilder: (context, index) {
@@ -470,7 +499,7 @@ class _ShowDevicesState extends State<DevicesPage> {
                     padding: const EdgeInsets.all(8.0),
                     child: Stack(
                       children: [
-                        // زر في أعلى يمين الكارد
+
                         Positioned(
                           top: 20,
                           right: 20,
@@ -496,9 +525,8 @@ class _ShowDevicesState extends State<DevicesPage> {
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     AddPeripherals(
-                                                  Deviceid:
-                                                      futureDevices[index].id!,
-                                                ),
+                                                      Deviceid: futureDevices[index].id!,
+                                                    ),
                                               ),
                                             ).then((value) {
                                               if (value == true) {
@@ -524,9 +552,8 @@ class _ShowDevicesState extends State<DevicesPage> {
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     AddProperties(
-                                                  DeviceId:
-                                                      futureDevices[index].id!,
-                                                ),
+                                                      DeviceId: futureDevices[index].id!,
+                                                    ),
                                               ),
                                             ).then((value) {
                                               if (value == true) {
@@ -543,9 +570,9 @@ class _ShowDevicesState extends State<DevicesPage> {
                                       ),
                                       ListTile(
                                         leading: Icon(Icons.h_mobiledata, color: Colors.blueAccent),
-                                        title: Text('hardware key'),
+                                        title: Text('Hardware Key'),
                                         onTap: () {
-                                          Navigator.pop(context); // لإغلاق النافذة المنبثقة
+                                          Navigator.pop(context);
                                           if (hardwarekey == null) {
                                             Navigator.push(
                                               context,
@@ -567,8 +594,6 @@ class _ShowDevicesState extends State<DevicesPage> {
                                         },
                                       ),
 
-
-                                      // تعديل الجهاز
                                       ListTile(
                                         leading: const Icon(Icons.edit,
                                             color: Colors.blueAccent),
@@ -579,8 +604,7 @@ class _ShowDevicesState extends State<DevicesPage> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) => EditDevice(
-                                                Deviceid:
-                                                    futureDevices[index].id!,
+                                                Deviceid: futureDevices[index].id!,
                                               ),
                                             ),
                                           ).then((value) {
@@ -599,18 +623,17 @@ class _ShowDevicesState extends State<DevicesPage> {
                                           title: const Text('Delete Device'),
                                           onTap: () {
                                             Navigator.pop(context);
-                                            showDeleteDialog(context,
-                                                futureDevices[index].id!);
+                                            showDeleteDialog(
+                                                context, futureDevices[index].id!);
                                           },
-                                        )
+                                        ),
                                       ],
                                       if (role == '2') ...[
                                         ListTile(
                                           leading: const Icon(
                                               Icons.install_desktop,
                                               color: Colors.blueAccent),
-                                          title: const Text(
-                                              'Installation Service'),
+                                          title: const Text('Installation Service'),
                                           onTap: () {
                                             Navigator.pop(context);
                                             Navigator.push(
@@ -618,9 +641,8 @@ class _ShowDevicesState extends State<DevicesPage> {
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     CreateInstallationService(
-                                                  deviceId:
-                                                      futureDevices[index].id!,
-                                                ),
+                                                      deviceId: futureDevices[index].id!,
+                                                    ),
                                               ),
                                             ).then((value) {
                                               if (value == true) {
@@ -635,8 +657,7 @@ class _ShowDevicesState extends State<DevicesPage> {
                                           leading: const Icon(
                                               Icons.settings_suggest_outlined,
                                               color: Colors.blueAccent),
-                                          title:
-                                              const Text('Maintenance Service'),
+                                          title: const Text('Maintenance Service'),
                                           onTap: () {
                                             Navigator.pop(context);
                                             Navigator.push(
@@ -644,9 +665,8 @@ class _ShowDevicesState extends State<DevicesPage> {
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     CreateMaintenanceService(
-                                                  deviceId:
-                                                      futureDevices[index].id!,
-                                                ),
+                                                      deviceId: futureDevices[index].id!,
+                                                    ),
                                               ),
                                             ).then((value) {
                                               if (value == true) {
@@ -656,7 +676,7 @@ class _ShowDevicesState extends State<DevicesPage> {
                                               }
                                             });
                                           },
-                                        )
+                                        ),
                                       ],
                                     ],
                                   );
@@ -665,7 +685,7 @@ class _ShowDevicesState extends State<DevicesPage> {
                             },
                           ),
                         ),
-                        // محتوى الكارد في الوسط
+
                         Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -691,12 +711,10 @@ class _ShowDevicesState extends State<DevicesPage> {
                 );
               },
             );
-          } else if (snapshot.hasError) {
-            return Center(child: Text("${snapshot.error}"));
           }
-          return const Center(child: CircularProgressIndicator());
         },
       ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(

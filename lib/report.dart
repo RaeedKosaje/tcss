@@ -194,7 +194,6 @@ class _ReportState extends State<Report> {
         }
       }
 
-
       try {
         if (!optionsWithOutDates.contains(selectedOption)) {
           DateTime start = DateTime.parse(startDate);
@@ -203,7 +202,7 @@ class _ReportState extends State<Report> {
           if (end.isBefore(start)) {
             setState(() {
               _errorMessage =
-              'End date must be the same as or after the start date.';
+                  'End date must be the same as or after the start date.';
             });
             return;
           }
@@ -246,17 +245,14 @@ class _ReportState extends State<Report> {
           default:
             print('No API available for this option');
         }
-      }
-      catch (e) {
+      } catch (e) {
         // إذا حدث خطأ في تحويل التاريخ
         setState(() {
           _errorMessage = 'Invalid date format. Please select valid dates.';
-        }
-        );
+        });
       }
     }
   }
-
 
   // Functions to handle API calls
   Future<void> exportData(String uri, Map<String, dynamic> body) async {
@@ -317,8 +313,8 @@ class _ReportState extends State<Report> {
     });
   }
 
-  void exportMaintenanceOfDepartment(String startDate, String endDate,
-      String department) {
+  void exportMaintenanceOfDepartment(
+      String startDate, String endDate, String department) {
     exportData('$urlbase/exportMaintenanceOfDepartment', {
       'startDate': startDate,
       'endDate': endDate,
@@ -341,8 +337,8 @@ class _ReportState extends State<Report> {
     });
   }
 
-  void exportInstallationOfDepartment(String startDate, String endDate,
-      String department) {
+  void exportInstallationOfDepartment(
+      String startDate, String endDate, String department) {
     exportData('$urlbase/exportInstallationOfDepartment', {
       'startDate': startDate,
       'endDate': endDate,
@@ -401,6 +397,7 @@ class _ReportState extends State<Report> {
       );
     }
   } // Dropdown for users
+
   List<ShowDevices> Device = [];
   String? selectedDeviceId;
 
@@ -470,6 +467,7 @@ class _ReportState extends State<Report> {
       }).toList(),
     );
   } // Build dropdown for users
+
   Widget buildDeviceDropdown() {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(labelText: 'Select Device'),
@@ -498,8 +496,8 @@ class _ReportState extends State<Report> {
           selectedDepartmentId = newValue;
         });
       },
-      items: departments.map<DropdownMenuItem<String>>((
-          ShowDepartments department) {
+      items: departments
+          .map<DropdownMenuItem<String>>((ShowDepartments department) {
         return DropdownMenuItem<String>(
           value: department.id.toString(),
           child: Text(department.name ?? 'no name'), // عرض اسم القسم
@@ -519,52 +517,50 @@ class _ReportState extends State<Report> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Dynamic Form Example'),
+        appBar: AppBar(
+          title: Text('Dynamic Form Example'),
+          backgroundColor: Colors.blueAccent,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.home),
+              tooltip: 'Go to Home',
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Navigating to Home...'),
+                    duration: Duration(seconds: 1),
+                  ),
+                );
 
-        backgroundColor: Colors.blueAccent,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.home),
-            tooltip: 'Go to Home',
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Navigating to Home...'),
-                  duration: Duration(seconds: 1),
-                ),
-              );
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        FloorsPage(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      const begin = Offset(1.0, 0.0); // يبدأ من اليمين
+                      const end = Offset.zero; // ينتهي في المكان الحالي
+                      const curve = Curves.easeInOut;
 
-              Navigator.pushAndRemoveUntil(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) =>
-                      FloorsPage(),
-                  transitionsBuilder: (context, animation, secondaryAnimation,
-                      child) {
-                    const begin = Offset(1.0, 0.0); // يبدأ من اليمين
-                    const end = Offset.zero; // ينتهي في المكان الحالي
-                    const curve = Curves.easeInOut;
+                      var tween = Tween(begin: begin, end: end)
+                          .chain(CurveTween(curve: curve));
+                      var offsetAnimation = animation.drive(tween);
 
-                    var tween = Tween(begin: begin, end: end).chain(
-                        CurveTween(curve: curve));
-                    var offsetAnimation = animation.drive(tween);
-
-                    return SlideTransition(
-                      position: offsetAnimation,
-                      child: child,
-                    );
-                  },
-                ),
-                    (route) => false,
-              );
-            },
-          ),
-        ],
-      ),
-      drawer: NavDrawer(),
-      body: Column(
-        children: [
+                      return SlideTransition(
+                        position: offsetAnimation,
+                        child: child,
+                      );
+                    },
+                  ),
+                  (route) => false,
+                );
+              },
+            ),
+          ],
+        ),
+        drawer: NavDrawer(),
+        body: Column(children: [
           // الصورة في الأعلى
           Container(
             height: 200, // يمكنك تعديل هذا الحجم حسب رغبتك
@@ -575,14 +571,18 @@ class _ReportState extends State<Report> {
               ),
             ),
           ),
-
-          // Expanded لضمان أن المحتوى النصي يأخذ المساحة المتبقية
-          Expanded(
-            child: Padding(
+        SingleChildScrollView(
+            child:
+            Center(
+              child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Form(
                 key: _formKey,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  // لضبط المحاذاة الأفقية
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  // لضبط المحاذاة العمودية
                   children: [
                     DropdownButton<String>(
                       hint: Text('Select Option'),
@@ -599,14 +599,13 @@ class _ReportState extends State<Report> {
                         startDate = null;
 
                         setState(() {
-                          selectedOption =
-                              newValue; // إعادة تعيين الخيار المحدد
-                          _downloadLink = null; // إعادة تعيين رابط التحميل
-                          _errorMessage = null; // إزالة رسالة الخطأ
+                          selectedOption = newValue;
+                          _downloadLink = null;
+                          _errorMessage = null;
                         });
                       },
-                      items: options.map<DropdownMenuItem<String>>((
-                          String value) {
+                      items:
+                          options.map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
@@ -626,23 +625,25 @@ class _ReportState extends State<Report> {
                       Text(
                         _errorMessage!,
                         style: TextStyle(color: Colors.red),
+                        textAlign:
+                            TextAlign.center, // لضبط محاذاة النص في المنتصف
                       ),
                     ],
                     if (_downloadLink != null) ...[
                       SizedBox(height: 16.0),
                       ElevatedButton(
-                        onPressed: () => _launchURL(_downloadLink!),
-                        child: Text('Download Report', style: TextStyle(
-                            fontSize: 18)),
+                        onPressed: () => launch(_downloadLink!),
+                        child: Text(
+                          'Download Report',
+                          style: TextStyle(fontSize: 18),
+                        ),
                       ),
                     ],
                   ],
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
+          )
+        )]));
   }
 }

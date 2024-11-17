@@ -39,8 +39,11 @@ class Creathardwarekey extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
+          SingleChildScrollView(
+              child:
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 100.0),
             child: Center(
               child: Card(
                 shape: RoundedRectangleBorder(
@@ -147,7 +150,7 @@ class Creathardwarekey extends StatelessWidget {
               ),
             ),
           ),
-        ]));
+            ))]));
   }
 
   Future<bool> createDevice({

@@ -56,9 +56,8 @@ class _ShowDevicesState extends State<DevicesPage> {
 
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
-      futureDevices =
-          jsonResponse.map((data) => ShowDevices.fromJson(data)).toList();
-      return futureDevices;
+      return jsonResponse.map((data) => ShowDevices.fromJson(data)).toList();
+
     } else {
       throw Exception('Failed to load devices');
     }
@@ -114,7 +113,6 @@ class _ShowDevicesState extends State<DevicesPage> {
     if (response3.statusCode == 200) {
       dynamic jsonResponse = json.decode(response3.body);
       setState(() {
-
         hardwarekey = Hardwarekey.fromJson(jsonResponse);
       });
     } else {
@@ -368,9 +366,7 @@ class _ShowDevicesState extends State<DevicesPage> {
                   hardwarekey?.exDate ?? "غير موجود"),
               _buildPeripheralRow(Icons.description, 'description',
                   hardwarekey?.description ?? "رينغير موجود"),
-
               const SizedBox(height: 10),
-
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -452,133 +448,172 @@ class _ShowDevicesState extends State<DevicesPage> {
         ],
       ),
       drawer: NavDrawer(),
-      body: FutureBuilder(
-        future: fetchDevices(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error, size: 60, color: Colors.red),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Failed to load devices, please try again later.",
-                    style: TextStyle(fontSize: 18, color: Colors.red),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            );
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(Icons.info_outline, size: 60, color: Colors.blue),
-                  SizedBox(height: 10),
-                  Text("No devices available", style: TextStyle(fontSize: 18)),
-                ],
-              ),
-            );
-          } else {
-            List<ShowDevices> futureDevices = snapshot.data!;
-            return ListView.builder(
-              itemCount: futureDevices.length,
-              itemBuilder: (context, index) {
-                return Card(
-                  color: Color(0xffd1d8e0),
-                  elevation: 5,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40.0),
-                  ),
-                  shadowColor: Colors.blue.withOpacity(0.8),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Stack(
-                      children: [
-
-                        Positioned(
-                          top: 20,
-                          right: 20,
-                          child: IconButton(
-                            icon: const Icon(Icons.more_vert),
-                            onPressed: () {
-                              device(futureDevices[index].id!);
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      ListTile(
-                                        leading: const Icon(Icons.extension,
-                                            color: Colors.blue),
-                                        title: const Text('Show Peripherals'),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          if (showPeripherals == null) {
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await fetchDevices();
+        },
+        child: FutureBuilder(
+          future: fetchDevices(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error, size: 60, color: Colors.red),
+                    const SizedBox(height: 10),
+                    Text(
+                      "Please add devices or try again later.",
+                      style: TextStyle(fontSize: 18, color: Colors.red),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              );
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.info_outline, size: 60, color: Colors.blue),
+                    SizedBox(height: 10),
+                    Text("No devices available",
+                        style: TextStyle(fontSize: 18)),
+                  ],
+                ),
+              );
+            } else {
+              List<ShowDevices> futureDevices = snapshot.data!;
+              return ListView.builder(
+                itemCount: futureDevices.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    color: Color(0xffd1d8e0),
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(40.0),
+                    ),
+                    shadowColor: Colors.blue.withOpacity(0.8),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            top: 20,
+                            right: 20,
+                            child: IconButton(
+                              icon: const Icon(Icons.more_vert),
+                              onPressed: () {
+                                device(futureDevices[index].id!);
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        ListTile(
+                                          leading: const Icon(Icons.extension,
+                                              color: Colors.blue),
+                                          title: const Text('Show Peripherals'),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                            if (showPeripherals == null) {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AddPeripherals(
+                                                    Deviceid:
+                                                        futureDevices[index]
+                                                            .id!,
+                                                  ),
+                                                ),
+                                              ).then((value) {
+                                                if (value == true) {
+                                                  setState(() {
+                                                    fetchDevices();
+                                                  });
+                                                }
+                                              });
+                                            } else {
+                                              showDeviceper(context);
+                                            }
+                                          },
+                                        ),
+                                        ListTile(
+                                          leading: const Icon(Icons.info,
+                                              color: Colors.blueAccent),
+                                          title: const Text('Show Properties '),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                            if (showProperties == null) {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AddProperties(
+                                                    DeviceId:
+                                                        futureDevices[index]
+                                                            .id!,
+                                                  ),
+                                                ),
+                                              ).then((value) {
+                                                if (value == true) {
+                                                  setState(() {
+                                                    fetchDevices();
+                                                  });
+                                                }
+                                              });
+                                            } else {
+                                              showDeviceSpecifications(
+                                                  showProperties!);
+                                            }
+                                          },
+                                        ),
+                                        ListTile(
+                                          leading: Icon(Icons.h_mobiledata,
+                                              color: Colors.blueAccent),
+                                          title: Text('Hardware Key'),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                            if (hardwarekey == null) {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Creathardwarekey(
+                                                    deviceid:
+                                                        futureDevices[index]
+                                                            .id!,
+                                                  ),
+                                                ),
+                                              ).then((value) {
+                                                if (value == true) {
+                                                  setState(() {
+                                                    fetchDevices();
+                                                  });
+                                                }
+                                              });
+                                            } else {
+                                              showhardwarekey(context);
+                                            }
+                                          },
+                                        ),
+                                        ListTile(
+                                          leading: const Icon(Icons.edit,
+                                              color: Colors.blueAccent),
+                                          title: const Text('Edit Device'),
+                                          onTap: () {
+                                            Navigator.pop(context);
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>
-                                                    AddPeripherals(
-                                                      Deviceid: futureDevices[index].id!,
-                                                    ),
-                                              ),
-                                            ).then((value) {
-                                              if (value == true) {
-                                                setState(() {
-                                                  fetchDevices();
-                                                });
-                                              }
-                                            });
-                                          } else {
-                                            showDeviceper(context);
-                                          }
-                                        },
-                                      ),
-                                      ListTile(
-                                        leading: const Icon(Icons.info,
-                                            color: Colors.blueAccent),
-                                        title: const Text('Show Properties '),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          if (showProperties == null) {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    AddProperties(
-                                                      DeviceId: futureDevices[index].id!,
-                                                    ),
-                                              ),
-                                            ).then((value) {
-                                              if (value == true) {
-                                                setState(() {
-                                                  fetchDevices();
-                                                });
-                                              }
-                                            });
-                                          } else {
-                                            showDeviceSpecifications(
-                                                showProperties!);
-                                          }
-                                        },
-                                      ),
-                                      ListTile(
-                                        leading: Icon(Icons.h_mobiledata, color: Colors.blueAccent),
-                                        title: Text('Hardware Key'),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          if (hardwarekey == null) {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => Creathardwarekey(
-                                                  deviceid: futureDevices[index].id!,
+                                                    EditDevice(
+                                                  Deviceid:
+                                                      futureDevices[index].id!,
                                                 ),
                                               ),
                                             ).then((value) {
@@ -588,133 +623,112 @@ class _ShowDevicesState extends State<DevicesPage> {
                                                 });
                                               }
                                             });
-                                          } else {
-                                            showhardwarekey(context);
-                                          }
-                                        },
-                                      ),
-
-                                      ListTile(
-                                        leading: const Icon(Icons.edit,
-                                            color: Colors.blueAccent),
-                                        title: const Text('Edit Device'),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => EditDevice(
-                                                Deviceid: futureDevices[index].id!,
-                                              ),
-                                            ),
-                                          ).then((value) {
-                                            if (value == true) {
-                                              setState(() {
-                                                fetchDevices();
+                                          },
+                                        ),
+                                        if (role == '1') ...[
+                                          ListTile(
+                                            leading: const Icon(Icons.delete,
+                                                color: Colors.redAccent),
+                                            title: const Text('Delete Device'),
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                              showDeleteDialog(context,
+                                                  futureDevices[index].id!);
+                                            },
+                                          ),
+                                        ],
+                                        if (role == '2') ...[
+                                          ListTile(
+                                            leading: const Icon(
+                                                Icons.install_desktop,
+                                                color: Colors.blueAccent),
+                                            title: const Text(
+                                                'Installation Service'),
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      CreateInstallationService(
+                                                    deviceId:
+                                                        futureDevices[index]
+                                                            .id!,
+                                                  ),
+                                                ),
+                                              ).then((value) {
+                                                if (value == true) {
+                                                  setState(() {
+                                                    fetchDevices();
+                                                  });
+                                                }
                                               });
-                                            }
-                                          });
-                                        },
-                                      ),
-                                      if (role == '1') ...[
-                                        ListTile(
-                                          leading: const Icon(Icons.delete,
-                                              color: Colors.redAccent),
-                                          title: const Text('Delete Device'),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                            showDeleteDialog(
-                                                context, futureDevices[index].id!);
-                                          },
-                                        ),
+                                            },
+                                          ),
+                                          ListTile(
+                                            leading: const Icon(
+                                                Icons.settings_suggest_outlined,
+                                                color: Colors.blueAccent),
+                                            title: const Text(
+                                                'Maintenance Service'),
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      CreateMaintenanceService(
+                                                    deviceId:
+                                                        futureDevices[index]
+                                                            .id!,
+                                                  ),
+                                                ),
+                                              ).then((value) {
+                                                if (value == true) {
+                                                  setState(() {
+                                                    fetchDevices();
+                                                  });
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ],
                                       ],
-                                      if (role == '2') ...[
-                                        ListTile(
-                                          leading: const Icon(
-                                              Icons.install_desktop,
-                                              color: Colors.blueAccent),
-                                          title: const Text('Installation Service'),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    CreateInstallationService(
-                                                      deviceId: futureDevices[index].id!,
-                                                    ),
-                                              ),
-                                            ).then((value) {
-                                              if (value == true) {
-                                                setState(() {
-                                                  fetchDevices();
-                                                });
-                                              }
-                                            });
-                                          },
-                                        ),
-                                        ListTile(
-                                          leading: const Icon(
-                                              Icons.settings_suggest_outlined,
-                                              color: Colors.blueAccent),
-                                          title: const Text('Maintenance Service'),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    CreateMaintenanceService(
-                                                      deviceId: futureDevices[index].id!,
-                                                    ),
-                                              ),
-                                            ).then((value) {
-                                              if (value == true) {
-                                                setState(() {
-                                                  fetchDevices();
-                                                });
-                                              }
-                                            });
-                                          },
-                                        ),
-                                      ],
-                                    ],
-                                  );
-                                },
-                              );
-                            },
+                                    );
+                                  },
+                                );
+                              },
+                            ),
                           ),
-                        ),
-
-                        Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.devices,
-                                  size: 50, color: Colors.blueAccent),
-                              const SizedBox(height: 10),
-                              Text(
-                                futureDevices[index].name ?? 'No Name',
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                          Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.devices,
+                                    size: 50, color: Colors.blueAccent),
+                                const SizedBox(height: 10),
+                                Text(
+                                  futureDevices[index].name ?? 'No Name',
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
-            );
-          }
-        },
+                  );
+                },
+              );
+            }
+          },
+        ),
       ),
-
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -734,6 +748,7 @@ class _ShowDevicesState extends State<DevicesPage> {
         child: const Icon(Icons.add),
         backgroundColor: Colors.blueAccent,
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
 }

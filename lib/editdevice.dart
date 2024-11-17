@@ -35,14 +35,18 @@ class EditDevice extends StatelessWidget {
         ),
     ),
     ),
-      Padding(
-        padding: const EdgeInsets.all(16.0),
+            SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child:
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 100.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset(
-              'lib/images/editdevice.png', // تأكد من وضع مسار الصورة الصحيح
-              height: 300, // ارتفاع الشعار
+              'lib/images/editdevice.png',
+              height: 300,
             ),
 
             const SizedBox(height: 20),
@@ -57,7 +61,7 @@ class EditDevice extends StatelessWidget {
             const SizedBox(height: 20),
             // حقول الإدخال
             _buildTextField(noteController, 'note'),
-
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
                 bool success = await editdevice(
@@ -69,7 +73,7 @@ class EditDevice extends StatelessWidget {
                   context: context,
                 );
                 if (success) {
-                  Navigator.pop(context, true); // الرجوع مع القيمة true
+                  Navigator.pop(context, true);
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -85,7 +89,7 @@ class EditDevice extends StatelessWidget {
           ],
         ),
       ),
-    ]));
+    )) ]));
   }
 
   Widget _buildTextField(TextEditingController controller, String label) {

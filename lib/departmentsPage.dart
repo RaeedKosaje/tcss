@@ -143,7 +143,7 @@ class _ShowDepartmentsState extends State<DepartmentsPage> {
                     const Icon(Icons.error, size: 60, color: Colors.red),
                     const SizedBox(height: 10),
                     Text(
-                      "Failed to load sections, please try again later.",
+                      "Please add department or try again later.",
                       style: TextStyle(fontSize: 18, color: Colors.red),
                       textAlign: TextAlign.center,
                     ),
@@ -285,6 +285,7 @@ class _ShowDepartmentsState extends State<DepartmentsPage> {
         child: const Icon(Icons.add),
         backgroundColor: Colors.blueAccent,
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
 }

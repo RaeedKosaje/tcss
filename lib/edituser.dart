@@ -70,10 +70,11 @@ class EditUser extends StatelessWidget {
               ),
             ),
           ),
-          // محتوى الصفحة
+            SingleChildScrollView(
+            child:
           Center(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.only(top: 100.0),
               child: Card(
                 color: Colors.white.withOpacity(0.7), // شفافية الكارد
                 shape: RoundedRectangleBorder(
@@ -135,9 +136,7 @@ class EditUser extends StatelessWidget {
                         const SizedBox(height: 20),
                         ElevatedButton(
                           onPressed: () async {
-                            if (editUserForm.currentState!.validate()) {
-                              bool success = false;
-                              await editUser(
+                              bool success = await editUser(
                                 userId: userId,
                                 name: nameController.text,
                                 password: passwordController.text,
@@ -148,7 +147,7 @@ class EditUser extends StatelessWidget {
                                 Navigator.pop(context, true);
                               }
                             }
-                          },
+                          ,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white10,
                             padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
@@ -169,7 +168,7 @@ class EditUser extends StatelessWidget {
               ),
             ),
           ),
-        ],
+            )],
       ),
     );
   }

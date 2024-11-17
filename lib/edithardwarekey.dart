@@ -41,8 +41,11 @@ class _EdithardwarekeyState extends State<Edithardwarekey> {
             ),
           ),
           // محتوى الصفحة
-          Padding(
-            padding: const EdgeInsets.all(16.0),
+          SingleChildScrollView(
+              child:
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 100.0),
             child: Center(
               child: Card(
                 shape: RoundedRectangleBorder(
@@ -139,7 +142,7 @@ class _EdithardwarekeyState extends State<Edithardwarekey> {
               ),
             ),
           ),
-        ],
+            ))],
       ),
     );
   }

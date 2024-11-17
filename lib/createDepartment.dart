@@ -32,8 +32,11 @@ class CreateDepartment extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
+          SingleChildScrollView(
+              child:
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 100.0),
             child: Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
@@ -95,7 +98,7 @@ class CreateDepartment extends StatelessWidget {
               ),
             ),
           ),
-        ],
+            ))],
       ),
     );
   }

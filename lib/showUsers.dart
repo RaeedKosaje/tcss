@@ -287,6 +287,7 @@ class _ShowUserState extends State<Showusers> {
         child: const Icon(Icons.add),
         backgroundColor: Colors.blueAccent,
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
 }

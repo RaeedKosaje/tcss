@@ -12,7 +12,8 @@ class CreateInstallationService extends StatefulWidget {
   const CreateInstallationService({super.key, required this.deviceId});
 
   @override
-  _CreateInstallationServiceState createState() => _CreateInstallationServiceState();
+  _CreateInstallationServiceState createState() =>
+      _CreateInstallationServiceState();
 }
 
 class _CreateInstallationServiceState extends State<CreateInstallationService> {
@@ -21,7 +22,8 @@ class _CreateInstallationServiceState extends State<CreateInstallationService> {
 
   List<Showmaterial> materials = []; // قائمة المواد
   int? selectedMaterialId; // المادة المختارة
-  List<Map<String, dynamic>> selectedMaterials = []; // قائمة المواد المختارة مع الكمية
+  List<Map<String, dynamic>> selectedMaterials =
+  []; // قائمة المواد المختارة مع الكمية
 
   @override
   void initState() {
@@ -33,7 +35,8 @@ class _CreateInstallationServiceState extends State<CreateInstallationService> {
     final prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token') ?? '';
 
-    final Uri url = Uri.parse('$urlbase/showMaterial'); // رابط API للحصول على المواد
+    final Uri url =
+    Uri.parse('$urlbase/showMaterial'); // رابط API للحصول على المواد
     final response = await http.get(url, headers: {
       'Authorization': 'Bearer $token',
     });
@@ -41,7 +44,8 @@ class _CreateInstallationServiceState extends State<CreateInstallationService> {
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       setState(() {
-        materials = jsonResponse.map((data) => Showmaterial.fromJson(data)).toList();
+        materials =
+            jsonResponse.map((data) => Showmaterial.fromJson(data)).toList();
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -58,124 +62,145 @@ class _CreateInstallationServiceState extends State<CreateInstallationService> {
         backgroundColor: Colors.blueAccent,
       ),
       drawer: NavDrawer(),
-      body: Stack(
-        children: [
-          // خلفية الصفحة
-          Container(
-            decoration: const BoxDecoration(
-              border: Border(
-                top: BorderSide(width: 5.0, color: Colors.blue), // إطار علوي
-                bottom: BorderSide(width: 5.0, color: Colors.blue), // إطار سفلي
-                left: BorderSide(width: 5.0, color: Colors.blue), // إطار يساري
-                right: BorderSide(width: 5.0, color: Colors.blue), // إطار يميني
+      body: SingleChildScrollView(
+        child: Stack(
+          children: [
+            // خلفية الصفحة
+            Container(
+              height:
+              MediaQuery.of(context).size.height, // ارتفاع ديناميكي للشاشة
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(width: 5.0, color: Colors.blue),
+                  // إطار علوي
+                  bottom: BorderSide(width: 5.0, color: Colors.blue),
+                  // إطار سفلي
+                  left: BorderSide(width: 5.0, color: Colors.blue),
+                  // إطار يساري
+                  right:
+                  BorderSide(width: 5.0, color: Colors.blue), // إطار يميني
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              elevation: 10,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Image.asset(
-                      'lib/images/createinstallationservice.png', // تأكد من وضع مسار الصورة الصحيح
-                      height: 300, // ارتفاع الشعار
-                    ),
-                    TextFormField(
-                      controller: descriptionController,
-                      decoration: const InputDecoration(
-                        labelText: 'Description',
-                        border: OutlineInputBorder(),
-                        filled: true,
-                        fillColor: Colors.white70,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    materials.isEmpty
-                        ? const CircularProgressIndicator() // مؤشر تحميل أثناء جلب المواد
-                        : DropdownButtonFormField<int>(
-                      value: selectedMaterialId,
-                      onChanged: (int? newValue) {
-                        setState(() {
-                          selectedMaterialId = newValue;
-                        });
-                      },
-                      items: materials.map<DropdownMenuItem<int>>((Showmaterial material) {
-                        return DropdownMenuItem<int>(
-                          value: material.id!,
-                          child: Text(material.name ?? 'No Name'),
-                        );
-                      }).toList(),
-                      decoration: const InputDecoration(
-                        labelText: 'Select Material',
-                        border: OutlineInputBorder(),
-                        filled: true,
-                        fillColor: Colors.white70,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: quantityController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: 'Quantity',
-                        border: OutlineInputBorder(),
-                        filled: true,
-                        fillColor: Colors.white70,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.add),
-                      label: const Text('Add Material'),
-                      onPressed: () {
-                        if (selectedMaterialId != null && quantityController.text.isNotEmpty) {
-                          setState(() {
-                            selectedMaterials.add({
-                              'material_id': selectedMaterialId!,
-                              'quantity': int.parse(quantityController.text),
-                            });
-                            selectedMaterialId = null;
-                            quantityController.clear();
-                          });
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Please select material and enter quantity')),
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white10,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 40, vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                elevation: 10,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Center(
+                        child: Image.asset(
+                          'lib/images/createinstallationservice.png',
+                          height: MediaQuery.of(context).size.height * 0.3,
                         ),
-                        elevation: 5,
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    Expanded(
-                      child: ListView.builder(
+                      const SizedBox(height: 20),
+                      TextFormField(
+                        controller: descriptionController,
+                        decoration: const InputDecoration(
+                          labelText: 'Description',
+                          border: OutlineInputBorder(),
+                          filled: true,
+                          fillColor: Colors.white70,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      materials.isEmpty
+                          ? const Center(child: CircularProgressIndicator())
+                          : DropdownButtonFormField<int>(
+                        value: selectedMaterialId,
+                        onChanged: (int? newValue) {
+                          setState(() {
+                            selectedMaterialId = newValue;
+                          });
+                        },
+                        items: materials.map<DropdownMenuItem<int>>(
+                                (Showmaterial material) {
+                              return DropdownMenuItem<int>(
+                                value: material.id!,
+                                child: Text(material.name ?? 'No Name'),
+                              );
+                            }).toList(),
+                        decoration: const InputDecoration(
+                          labelText: 'Select Material',
+                          border: OutlineInputBorder(),
+                          filled: true,
+                          fillColor: Colors.white70,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      TextFormField(
+                        controller: quantityController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          labelText: 'Quantity',
+                          border: OutlineInputBorder(),
+                          filled: true,
+                          fillColor: Colors.white70,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton.icon(
+                        icon: const Icon(Icons.add),
+                        label: const Text('Add Material'),
+                        onPressed: () {
+                          if (selectedMaterialId != null &&
+                              quantityController.text.isNotEmpty) {
+                            setState(() {
+                              selectedMaterials.add({
+                                'material_id': selectedMaterialId!,
+                                'quantity': int.parse(quantityController.text),
+                              });
+                              selectedMaterialId = null;
+                              quantityController.clear();
+                            });
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'Please select material and enter quantity')),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white10,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 40, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          elevation: 5,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      ListView.builder(
+                        shrinkWrap: true, // لتجنب مشاكل الارتفاع
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: selectedMaterials.length,
                         itemBuilder: (context, index) {
                           Showmaterial? material = materials.firstWhere(
-                                (element) => element.id == selectedMaterials[index]['material_id'],
-                            orElse: () => Showmaterial(id: null, name: 'Unknown'),
+                                (element) =>
+                            element.id ==
+                                selectedMaterials[index]['material_id'],
+                            orElse: () =>
+                                Showmaterial(id: null, name: 'Unknown'),
                           );
 
                           return Card(
                             child: ListTile(
-                              title: Text('Material: ${material.name ?? 'Unknown'}'),
-                              subtitle: Text('Quantity: ${selectedMaterials[index]['quantity']}'),
+                              title: Text(
+                                  'Material: ${material.name ?? 'Unknown'}'),
+                              subtitle: Text(
+                                  'Quantity: ${selectedMaterials[index]['quantity']}'),
                               trailing: IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
+                                icon:
+                                const Icon(Icons.delete, color: Colors.red),
                                 onPressed: () {
                                   setState(() {
                                     selectedMaterials.removeAt(index);
@@ -186,42 +211,45 @@ class _CreateInstallationServiceState extends State<CreateInstallationService> {
                           );
                         },
                       ),
-                    ),
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.check),
-                      label: const Text('Create Installation Service'),
-                      onPressed: () async {
-                        if (selectedMaterials.isNotEmpty) {
-                          bool success = await createInstallationService(
-                            description: descriptionController.text,
-                            materials: selectedMaterials,
-                            deviceId: widget.deviceId,
-                            context: context,
-                          );
-                          if (success) {
-                            Navigator.pop(context, true);
+                      const SizedBox(height: 20),
+                      ElevatedButton.icon(
+                        icon: const Icon(Icons.check),
+                        label: const Text('Create Installation Service'),
+                        onPressed: () async {
+                          if (selectedMaterials.isNotEmpty) {
+                            bool success = await createInstallationService(
+                              description: descriptionController.text,
+                              materials: selectedMaterials,
+                              deviceId: widget.deviceId,
+                              context: context,
+                            );
+                            if (success) {
+                              Navigator.pop(context, true);
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                  Text('Please add at least one material')),
+                            );
                           }
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Please add at least one material')),
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white10,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 40, vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white10,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 40, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -251,7 +279,8 @@ class _CreateInstallationServiceState extends State<CreateInstallationService> {
 
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Installation service created successfully')),
+        const SnackBar(
+            content: Text('Installation service created successfully')),
       );
       return true;
     } else {

@@ -19,7 +19,7 @@ class ShowMaterials extends StatefulWidget {
 
 class _ShowMaterialState extends State<ShowMaterials> {
   late Future<List<Showmaterial>> futureMaterial;
-
+  String role = '';
   @override
   void initState() {
     super.initState();
@@ -29,7 +29,7 @@ class _ShowMaterialState extends State<ShowMaterials> {
   Future<List<Showmaterial>> fetchMaterial() async {
     final prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token') ?? '';
-
+    role = prefs.getString('role') ?? '';
     final response = await http.get(
       Uri.parse('$urlbase/showMaterial'),
       headers: {
@@ -284,12 +284,13 @@ class _ShowMaterialState extends State<ShowMaterials> {
                                       });
                                     },
                                   ),
+                                  if(role=='1')...[
                                   IconButton(
                                     icon: Icon(Icons.delete, color: Color(0xfff8c291)),
                                     onPressed: () {
                                       _showDeleteDialog(context, material[index]);
                                     },
-                                  ),
+                                  )],
                                 ],
                               ),
                             ],
@@ -326,6 +327,7 @@ class _ShowMaterialState extends State<ShowMaterials> {
         child: const Icon(Icons.add),
         backgroundColor: Colors.blueAccent,
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
 }
